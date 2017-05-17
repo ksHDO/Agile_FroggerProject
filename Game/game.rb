@@ -19,6 +19,12 @@ class GameWindow < Gosu::Window
   def draw
     $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
   end
+
+  def button_down(id)
+    if id == Gosu::KbEscape
+      close
+    end
+  end
 end
 window = GameWindow.new
 window.show
