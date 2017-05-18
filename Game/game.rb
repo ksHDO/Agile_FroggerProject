@@ -3,6 +3,7 @@ require 'gosu'
 require 'celluloid/io'
 require 'socket'
 require 'securerandom'
+require '../Game/player'
 
 include Gosu
 
@@ -27,6 +28,7 @@ class EchoClient
 end
 
 class GameWindow < Window
+
   def initialize
     super $window_x, $window_y
     self.caption = "Reggorf"
@@ -35,12 +37,17 @@ class GameWindow < Window
     @client = EchoClient.new("127.0.0.1", 1234)
     puts @client.echo("TEST FOR ECHO")
 
-    # @player = player # player name
+    @player = Player.new
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
+  end
+
+  def update
+    @player.update
   end
 
   def draw
     $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
+    @player.draw
   end
 
   def button_down(id)
