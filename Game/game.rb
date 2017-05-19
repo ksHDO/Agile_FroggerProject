@@ -37,7 +37,7 @@ class GameWindow < Window
     @client = EchoClient.new("127.0.0.1", 1234)
     puts @client.echo("TEST FOR ECHO")
 
-    @player = Player.new
+    @player = Player.new($window_x / 2, $window_y)
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
   end
 
@@ -53,6 +53,8 @@ class GameWindow < Window
   def button_down(id)
     if id == Gosu::KbEscape
       close
+    else
+      super
     end
   end
 end
