@@ -6,7 +6,6 @@ class Player
     @image = Gosu::Image.new("../assets/images/gorf.png")
     @x = x
     @y = y
-    @vel_x = @vel_y = 3.0
     @angle = 0.0
   end
 
