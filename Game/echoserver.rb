@@ -1,4 +1,3 @@
-
 require 'bundler/setup'
 require 'celluloid/autostart'
 require 'celluloid/io'

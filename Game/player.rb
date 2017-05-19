@@ -11,16 +11,16 @@ class Player
   end
 
   def update
-    if Input.button_down(Gosu::KB_W)
+    if Input.button_down(Gosu::KB_W) or Input.button_down(Gosu::Button::KbUp)
       turn_up
       move
-    elsif Input.button_down(Gosu::KB_A)
+    elsif Input.button_down(Gosu::KB_A) or Input.button_down(Gosu::Button::KbLeft)
       turn_left
       move
-    elsif Input.button_down(Gosu::KB_S)
+    elsif Input.button_down(Gosu::KB_S) or Input.button_down(Gosu::Button::KbDown)
       turn_down
       move
-    elsif Input.button_down(Gosu::KB_D)
+    elsif Input.button_down(Gosu::KB_D) or Input.button_down(Gosu::Button::KbRight)
       turn_right
       move
     end
