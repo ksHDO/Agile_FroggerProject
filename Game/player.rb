@@ -4,6 +4,7 @@ require '../Game/input'
 class Player
   def initialize(x, y)
     @image = Gosu::Image.new("../assets/images/gorf.png")
+    @image_size = @image#height
     @x = x
     @y = y
     @angle = 0.0
