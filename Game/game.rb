@@ -20,7 +20,7 @@ class GameWindow < Window
     # @spritesheet = Image.load_tiles(self, SPRITESHEET, 33, 33, true)
     # @map = Map.new(self, MAPFILE)  # map representing the movable area
 
-    @client = Client.new("localhost", 65509)
+    @client = Client.new("10.10.26.10", 65509)
     @player = Player.new(($window_x)*rand, $window_y-20)
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
   end
