@@ -22,10 +22,10 @@ class Server
     @connections[:rooms] = @rooms
     @connections[:clients] = @clients
     @clientId = 0
-    run
+    server_update
   end
 
-  def run
+  def server_update
     loop {
       Thread.start(@server.accept) do | client |
         # @connections[:clients].each do |other_name, other_client|
@@ -43,6 +43,7 @@ class Server
         get_and_send_position(id,client)
       end
     }.join
+
   end
 
   def get_and_send_position(id, client)
@@ -51,13 +52,14 @@ class Server
       x = client.gets.chomp
       y = client.gets.chomp
       puts 'receive <' + x.to_s + ',' + y.to_s + '>'
-      sendToAll(id, x, y)
+      sendToAll(id, x,y )
     }
   end
 
   def sendToAll(fromId, x, y)
     @connections[:clients].each do |id, other_client|
-      other_client.puts 'id ' + fromId.to_s + ' sent <' + x.to_s + ',' + y.to_s + '>'
+      other_client.puts x
+      other_client.puts y
     end
   end
 

@@ -12,7 +12,7 @@ class EchoServer
     # Since we included Celluloid::IO, we're actually making a
     # Celluloid::IO::TCPServer here
     @server = TCPServer.new(host, port)
-    async.run
+    async.server_update
   end
 
   def finalize

@@ -5,7 +5,7 @@ class Client
     @server = TCPSocket.open(ip, port)
     # @request = nil
     @response = nil
-    listen
+    # listen
     # @request.join
     # @response.join
   end
@@ -14,13 +14,17 @@ class Client
     @server.close
   end
 
+  def get_server
+    return @server.gets.chomp
+  end
+
   def listen
-    @response = Thread.new do
-      loop {
-        msg = @server.gets.chomp
-        puts "#{msg}"
-      }
-    end
+    # @response = Thread.new do
+    #   loop {
+    #     msg = @server.gets.chomp
+    #     puts "#{msg}"
+    #   }
+    # end
   end
 
   def sendInput(x, y)

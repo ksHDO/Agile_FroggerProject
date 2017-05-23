@@ -11,6 +11,9 @@ include Gosu
 $background_image = Gosu::Image.new('../assets/images/bg.jpg', :tileable => false, :retro => true)
 $window_x = 640
 $window_y = 480
+$isFrog = true
+$serverIp = "10.10.26.10"
+$serverPort = 65509
 
 class GameWindow < Window
 
@@ -20,14 +23,24 @@ class GameWindow < Window
     # @spritesheet = Image.load_tiles(self, SPRITESHEET, 33, 33, true)
     # @map = Map.new(self, MAPFILE)  # map representing the movable area
 
-    @client = Client.new("10.10.26.10", 65509)
     @player = Player.new(($window_x)*rand, $window_y-20)
+
+    @client = Client.new($serverIp, $serverPort)
+
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
   end
 
   def update
     @player.update
-    @client.sendInput(@player.x, @player.y)
+    if $isFrog
+      @client.sendInput(@player.x, @player.y)
+    else
+      strY = @client.get_server
+      strX = @client.get_server
+      @player.setX strX.to_f
+      @player.setY strY.to_f
+    end
+
   end
 
   def draw

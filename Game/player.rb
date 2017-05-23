@@ -52,9 +52,16 @@ class Player
   end
 
   def x
-    @x
+    return @x
+  end
+
+  def setX(x)
+    @x = x
   end
   def y
-    @y
+    return @y
+  end
+  def setY(y)
+    @y = y
   end
 end
