@@ -1,8 +1,16 @@
 require "socket"
 
-$commands = [
-    "pm"
-]
+# Server needs to minimize sending data between clients
+# Send frog positions to everyone every x defined seconds
+#
+# LATER: Send Truck Send Lane, Type, Direction
+#
+#
+#
+#
+
+$serverIp = "localhost"
+$serverPort = 65509
 
 class Server
   def initialize(ip, port)
@@ -13,81 +21,47 @@ class Server
     @connections[:server] = @server
     @connections[:rooms] = @rooms
     @connections[:clients] = @clients
-
+    @clientId = 0
     run
   end
 
   def run
     loop {
       Thread.start(@server.accept) do | client |
-        nick_name = client.gets.chomp.to_sym
-        @connections[:clients].each do |other_name, other_client|
-          if nick_name == other_name || client == other_client
-            client.puts "That username already exists."
-            Thread.kill self
-          end
-        end
-        puts "#{nick_name} #{client}"
-        @connections[:clients][nick_name] = client
+        # @connections[:clients].each do |other_name, other_client|
+        #   if nick_name == other_name || client == other_client
+        #     client.puts "That username already exists."
+        #     Thread.kill self
+        #   end
+        # end
+        # puts "#{nick_name} #{client}"
+        id = @clientId
+        @clientid = @clientId + 1
+        @connections[:clients][id] = client
+        puts "got someone"
         client.puts "Connection has been established"
-        sendToAll "[#{Time.now.ctime}] #{nick_name} has joined"
-        listen_user_messages( nick_name, client )
+        get_and_send_position(id,client)
       end
     }.join
   end
 
-  def listen_user_messages( username, client )
+  def get_and_send_position(id, client)
     loop {
-      msg = client.gets.chomp
-      if (msg[0] == '.')
-        msg[0] = ''
-        puts "hello"
-        parse_command(username, client, msg)
-      else
-        sendToAll "[#{Time.now.ctime}] #{username.to_s}: #{msg}"
-      end
+      # puts 'waiting for pos'
+      x = client.gets.chomp
+      y = client.gets.chomp
+      puts 'receive <' + x.to_s + ',' + y.to_s + '>'
+      sendToAll(id, x, y)
     }
   end
 
-  def parse_command(username, client, msg)
-    com = msg.split(' ')[0]
-    msg.slice! "#{com} "
-    could_parse = false
-    $commands.each do |command|
-      puts "command: #{command}"
-      if (command == com)
-        toUser = msg.split(' ')[0]
-        msg.slice! "#{toUser} "
-        msg = "[#{Time.now.ctime}] PM #{username.to_s}: #{msg}"
-        sendToUser(toUser, msg)
-        client.puts msg
-        could_parse = true
-      end
-    end
-    if (!could_parse)
-      client.puts "Could not parse command"
+  def sendToAll(fromId, x, y)
+    @connections[:clients].each do |id, other_client|
+      other_client.puts 'id ' + fromId.to_s + ' sent <' + x.to_s + ',' + y.to_s + '>'
     end
   end
 
-  def get_all_clients()
-
-  end
-
-  def sendToAll(msg)
-    @connections[:clients].each do |other_name, other_client|
-      other_client.puts "#{msg}"
-    end
-  end
-
-  def sendToUser(user, msg)
-    @connections[:clients].each do |other_name, other_client|
-      puts "from '#{user}' to '#{other_name}' with '#{msg}' ?"
-      if user.to_s == other_name.to_s
-        other_client.puts "#{msg}"
-      end
-    end
-  end
 end
 
-server = Server.new("192.168.1.8", 65509)
+server = Server.new($serverIp, $serverPort)
 server.run

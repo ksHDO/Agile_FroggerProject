@@ -50,4 +50,11 @@ class Player
     @x += Gosu.offset_x(@angle, 5)
     @y += Gosu.offset_y(@angle, 5)
   end
+
+  def x
+    @x
+  end
+  def y
+    @y
+  end
 end

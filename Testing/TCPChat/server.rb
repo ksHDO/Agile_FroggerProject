@@ -39,6 +39,7 @@ class Server
   def listen_user_messages( username, client )
     loop {
       msg = client.gets.chomp
+      puts "[#{username}]: #{msg}"
       if (msg[0] == '.')
         msg[0] = ''
         parse_command(username, client, msg)
@@ -91,5 +92,5 @@ class Server
   end
 end
 
-server = Server.new("10.10.26.3", 65509)
+server = Server.new("10.10.26.18", 65509)
 server.run

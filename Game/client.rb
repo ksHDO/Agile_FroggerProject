@@ -1,14 +1,17 @@
 require "socket"
 
 class Client
-  def initialize( server )
-    @server = server
-    @request = nil
+  def initialize( ip, port )
+    @server = TCPSocket.open(ip, port)
+    # @request = nil
     @response = nil
     listen
-    send
-    @request.join
-    @response.join
+    # @request.join
+    # @response.join
+  end
+
+  def disconnect
+    @server.close
   end
 
   def listen
@@ -20,16 +23,9 @@ class Client
     end
   end
 
-  def send
-    puts "Enter username:"
-    @request = Thread.new do
-      loop {
-        msg = $stdin.gets.chomp
-        @server.puts( msg )
-      }
-    end
+  def sendInput(x, y)
+    @server.puts x
+    @server.puts y
+    # puts 'sent <' + x.to_s + ',' + y.to_s + '>'
   end
 end
-
-server = TCPSocket.open("10.10.26.3", 65509)
-Client.new(server)
