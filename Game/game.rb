@@ -8,8 +8,8 @@ require '../Game/player'
 include Gosu
 
 $background_image = Gosu::Image.new('../assets/images/bg.jpg', :tileable => false, :retro => true)
-$window_x = 640
-$window_y = 480
+$window_x = 1600
+$window_y = 900
 
 class GameWindow < Window
 
@@ -25,6 +25,9 @@ class GameWindow < Window
 
   def update
     @player.update
+
+    # must update input last
+    Input.update
   end
 
   def draw
