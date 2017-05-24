@@ -9,7 +9,7 @@ require "socket"
 #
 #
 
-$serverIp = "10.10.26.10"
+$serverIp = "192.168.1.8"
 $serverPort = 65509
 
 class Server
