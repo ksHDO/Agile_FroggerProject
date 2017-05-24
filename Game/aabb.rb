@@ -1,5 +1,3 @@
-require 'gosu'
-
 class AABB
   def initialize(x, y, image)
     @min_x = x - (image.width / 2)
