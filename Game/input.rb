@@ -11,26 +11,26 @@ class Input
 
   def self.button_down(button)
     register_button(button)
-    down = Gosu.button_down? button
+    _down = Gosu.button_down? button
   end
 
   def self.button_pressed(button)
     register_button(button)
-    pressed = false
+    _pressed = false
     if button_down(button)
       unless @pressed_last_frame[button]
-        pressed = true
+        _pressed = true
       end
     end
-    return pressed
+    return _pressed
   end
 
   def self.button_released(button)
     register_button(button)
-    released = false
+    _released = false
     if @pressed_last_frame[button]
       unless button_down(button)
-        released = true
+        _released = true
       end
     end
   end

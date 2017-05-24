@@ -1,0 +1,3 @@
+class Collidable
+
+end

@@ -1,5 +1,6 @@
 require 'gosu'
 require '../Game/input'
+require '../Game/aabb'
 
 class Player
   def initialize(x, y)
@@ -7,6 +8,7 @@ class Player
     @x = x
     @y = y
     @angle = 0.0
+    @aabb = AABB.new(x, y, @image)
   end
 
   def update
@@ -46,7 +48,11 @@ class Player
   end
 
   def move
-    @x += Gosu.offset_x(@angle, 30)
-    @y += Gosu.offset_y(@angle, 30)
+    _dx = Gosu.offset_x(@angle, 30)
+    _dy = Gosu.offset_y(@angle, 30)
+    @x += _dx
+    @y += _dy
+
+    @aabb.update(_dx, _dy)
   end
 end
