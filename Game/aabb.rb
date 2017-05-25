@@ -17,6 +17,10 @@ class AABB
     _result = (bounding_box.get_max_x > @min_x and bounding_box.get_min_x < get_max_x and bounding_box.get_max_y > @min_y and bounding_box.get_min_y < get_max_y)
   end
 
+  def point_intersects(x, y)
+    _result = (x > @min_x and x < @max_x and y > @min_y and y < @max_y)
+  end
+
   def get_min_x
     @min_x
   end
