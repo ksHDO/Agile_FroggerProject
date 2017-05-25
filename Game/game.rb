@@ -19,7 +19,7 @@ class GameWindow < Window
     super $window_x, $window_y
     self.caption = "Reggorf"
     @button = Button.new(300,300,Gosu::Image.new('../assets/images/button.jpg', :tileable => false, :retro => true))
-    @player = Player.new(100, $window_y-20)
+    @player = Player.new(300, $window_y-100)
     @collision = CollisionDetection.new(Array.[](@player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
   end
