@@ -4,6 +4,7 @@ require 'celluloid/io'
 require 'socket'
 require 'securerandom'
 require '../Game/player'
+require '../Game/collision_detection'
 
 include Gosu
 
@@ -16,14 +17,16 @@ class GameWindow < Window
   def initialize
     super $window_x, $window_y
     self.caption = "Reggorf"
-    # @spritesheet = Image.load_tiles(self, SPRITESHEET, 33, 33, true)
-    # @map = Map.new(self, MAPFILE)  # map representing the movable area
 
-    @player = Player.new(($window_x)*rand, $window_y-20)
+    @player = Player.new(100, $window_y-20)
+    @collision = CollisionDetection.new(Array.[](@player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
   end
 
   def update
+    # must update collision first
+    @collision.update
+
     @player.update
 
     # must update input last

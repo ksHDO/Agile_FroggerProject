@@ -1,14 +1,14 @@
 require 'gosu'
 require '../Game/input'
-require '../Game/aabb'
+require '../Game/collidable'
 
-class Player
+class Player < Collidable
   def initialize(x, y)
     @image = Gosu::Image.new("../assets/images/gorf.png")
+    super(x, y, @image)
     @x = x
     @y = y
     @angle = 0.0
-    @aabb = AABB.new(x, y, @image)
   end
 
   def update
@@ -29,6 +29,10 @@ class Player
 
   def draw
     @image.draw_rot(@x, @y, 1, @angle)
+  end
+
+  def on_collision
+    puts "There was a collision"
   end
 
   def turn_up
