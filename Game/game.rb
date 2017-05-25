@@ -24,19 +24,17 @@ class GameWindow < Window
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
   end
 
-  def needs_cursor?
-    true
-  end
   def update
     # must update collision first
     @collision.update
 
     @player.update
-    if(Input.button_pressed(Gosu::MS_LEFT))
-      if(@button.intersects(self.mouse_x, self.mouse_y))
+    if Input.button_pressed(Gosu::MS_LEFT)
+      if @button.intersects(self.mouse_x, self.mouse_y)
         @button.on_click
       end
     end
+
     # must update input last
     Input.update
   end
@@ -45,6 +43,10 @@ class GameWindow < Window
     $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
     @player.draw
     @button.draw
+  end
+
+  def needs_cursor?
+    true
   end
 
   def button_down(id)
