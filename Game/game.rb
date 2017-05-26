@@ -29,7 +29,7 @@ class GameWindow < Window
     begin
       @client = Client.new($serverIp, $serverPort)
     rescue => ex
-
+      puts "Could not connect to server, running locally"
     end
 
 
@@ -45,7 +45,12 @@ class GameWindow < Window
   def net_frog()
     @listenForInput = Thread.new do
       loop {
-        packet = @client.get_server
+        begin
+          packet = @client.get_server
+        rescue => ex
+          puts "Lost connection to server, running locally"
+          @client = nil
+        end
         # @player = packet
         @player.setX  packet.frog_x
         @player.setY packet.frog_y
