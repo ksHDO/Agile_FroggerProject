@@ -42,6 +42,7 @@ class GameWindow < Window
     end
   end
 
+
   def net_frog()
     @listenForInput = Thread.new do
       loop {
@@ -51,7 +52,7 @@ class GameWindow < Window
           puts "Lost connection to server, running locally"
           @client = nil
         end
-        # @player = packet
+        # @player = packet02
         @player.setX  packet.frog_x
         @player.setY packet.frog_y
         @player.setRotation packet.frog_angle
@@ -74,13 +75,6 @@ class GameWindow < Window
           # @client.sendData @player
           @currentFrameToSend = 0
         end
-      else
-        # packet = @client.get_server
-        # # @player = packet
-        # @player.setX  packet.frog_x
-        # @player.setY packet.frog_y
-        # @player.setRotation packet.frog_angle
-
       end
     end
 
