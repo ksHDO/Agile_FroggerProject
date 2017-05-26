@@ -31,6 +31,21 @@ class GameWindow < Window
     @currentFrameToSend = 0
 
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
+    if not $isFrog
+      net_frog
+    end
+  end
+
+  def net_frog()
+    @listenForInput = Thread.new do
+      loop {
+        packet = @client.get_server
+        # @player = packet
+        @player.setX  packet.frog_x
+        @player.setY packet.frog_y
+        @player.setRotation packet.frog_angle
+      }
+    end
   end
 
   def update
@@ -44,16 +59,17 @@ class GameWindow < Window
         p.frog_y = @player.y
         p.frog_angle = @player.angle
         @client.sendData p
+        # @client.sendData @player
         @currentFrameToSend = 0
       end
     else
-      packet = @client.get_server
-      @player.setX  packet.frog_x
-      @player.setY packet.frog_y
-      @player.setRotation packet.frog_angle
+      # packet = @client.get_server
+      # # @player = packet
+      # @player.setX  packet.frog_x
+      # @player.setY packet.frog_y
+      # @player.setRotation packet.frog_angle
 
     end
-
   end
 
   def draw
