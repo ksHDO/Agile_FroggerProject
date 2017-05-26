@@ -5,6 +5,7 @@ require 'socket'
 require 'securerandom'
 require '../Game/player'
 require '../Game/client'
+require '../Game/packet'
 
 include Gosu
 
@@ -38,19 +39,19 @@ class GameWindow < Window
       @currentFrameToSend = @currentFrameToSend + 1
       if @currentFrameToSend >= @frameToSendOn
         # @client.sendInput(@player.x, @player.y)
-        @client.sendData @player
+        p = Packet.new
+        p.frog_x = @player.x
+        p.frog_y = @player.y
+        p.frog_angle = @player.angle
+        @client.sendData p
         @currentFrameToSend = 0
       end
     else
-      player = @client.get_server
-      @player.setX  player.x
-      @player.setY player.y
-      @player.setRotation player.angle
+      packet = @client.get_server
+      @player.setX  packet.frog_x
+      @player.setY packet.frog_y
+      @player.setRotation packet.frog_angle
 
-      # strY = @client.get_pos_from_server
-      # strX = @client.get_pos_from_server
-      # @player.setX strX.to_f
-      # @player.setY strY.to_f
     end
 
   end
