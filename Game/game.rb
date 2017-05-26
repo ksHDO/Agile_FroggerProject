@@ -26,7 +26,13 @@ class GameWindow < Window
 
     @player = Player.new(($window_x)*rand, $window_y-20)
 
-    @client = Client.new($serverIp, $serverPort)
+    begin
+      @client = Client.new($serverIp, $serverPort)
+    rescue => ex
+
+    end
+
+
     @frameToSendOn = 2
     @currentFrameToSend = 0
 
@@ -50,26 +56,29 @@ class GameWindow < Window
 
   def update
     @player.update
-    if $isFrog
-      @currentFrameToSend = @currentFrameToSend + 1
-      if @currentFrameToSend >= @frameToSendOn
-        # @client.sendInput(@player.x, @player.y)
-        p = Packet.new
-        p.frog_x = @player.x
-        p.frog_y = @player.y
-        p.frog_angle = @player.angle
-        @client.sendData p
-        # @client.sendData @player
-        @currentFrameToSend = 0
-      end
-    else
-      # packet = @client.get_server
-      # # @player = packet
-      # @player.setX  packet.frog_x
-      # @player.setY packet.frog_y
-      # @player.setRotation packet.frog_angle
+    if @client != nil
+      if $isFrog
+        @currentFrameToSend = @currentFrameToSend + 1
+        if @currentFrameToSend >= @frameToSendOn
+          # @client.sendInput(@player.x, @player.y)
+          p = Packet.new
+          p.frog_x = @player.x
+          p.frog_y = @player.y
+          p.frog_angle = @player.angle
+          @client.sendData p
+          # @client.sendData @player
+          @currentFrameToSend = 0
+        end
+      else
+        # packet = @client.get_server
+        # # @player = packet
+        # @player.setX  packet.frog_x
+        # @player.setY packet.frog_y
+        # @player.setRotation packet.frog_angle
 
+      end
     end
+
   end
 
   def draw
