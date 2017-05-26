@@ -6,7 +6,7 @@ class Collidable
     @aabb = AABB.new(x, y, image)
   end
 
-  def on_collision
+  def on_collision(collider)
 
   end
 

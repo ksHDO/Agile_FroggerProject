@@ -31,7 +31,7 @@ class Player < Collidable
     @image.draw_rot(@x, @y, 1, @angle)
   end
 
-  def on_collision
+  def on_collision(collider)
     puts "There was a collision"
   end
 
@@ -52,8 +52,8 @@ class Player < Collidable
   end
 
   def move
-    _dx = Gosu.offset_x(@angle, 30)
-    _dy = Gosu.offset_y(@angle, 30)
+    _dx = Gosu.offset_x(@angle, 48)
+    _dy = Gosu.offset_y(@angle, 48)
     @x += _dx
     @y += _dy
 
