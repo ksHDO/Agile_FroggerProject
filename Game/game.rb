@@ -12,7 +12,7 @@ $background_image = Gosu::Image.new('../assets/images/bg.jpg', :tileable => fals
 $window_x = 640
 $window_y = 480
 $isFrog = false
-$serverIp = "192.168.1.8"
+$serverIp = "localhost"
 $serverPort = 65509
 
 class GameWindow < Window
@@ -26,7 +26,7 @@ class GameWindow < Window
     @player = Player.new(($window_x)*rand, $window_y-20)
 
     @client = Client.new($serverIp, $serverPort)
-    @frameToSendOn = 3
+    @frameToSendOn = 2
     @currentFrameToSend = 0
 
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
@@ -37,14 +37,20 @@ class GameWindow < Window
     if $isFrog
       @currentFrameToSend = @currentFrameToSend + 1
       if @currentFrameToSend >= @frameToSendOn
-        @client.sendInput(@player.x, @player.y)
+        # @client.sendInput(@player.x, @player.y)
+        @client.sendData @player
         @currentFrameToSend = 0
       end
     else
-      strY = @client.get_server
-      strX = @client.get_server
-      @player.setX strX.to_f
-      @player.setY strY.to_f
+      player = @client.get_server
+      @player.setX  player.x
+      @player.setY player.y
+      @player.setRotation player.angle
+
+      # strY = @client.get_pos_from_server
+      # strX = @client.get_pos_from_server
+      # @player.setX strX.to_f
+      # @player.setY strY.to_f
     end
 
   end

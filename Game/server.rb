@@ -9,12 +9,12 @@ require "socket"
 #
 #
 
-$serverIp = "192.168.1.8"
+$serverIp = "localhost"
 $serverPort = 65509
 
 class Server
   def initialize(ip, port)
-    @server = TCPServer.open( ip, port )
+    @server = TCPServer.open(ip, port)
     @connections = Hash.new
     @rooms = Hash.new
     @clients = Hash.new
@@ -27,7 +27,7 @@ class Server
 
   def server_update
     loop {
-      Thread.start(@server.accept) do | client |
+      Thread.start(@server.accept) do |client|
         # @connections[:clients].each do |other_name, other_client|
         #   if nick_name == other_name || client == other_client
         #     client.puts "That username already exists."
@@ -39,8 +39,8 @@ class Server
         @clientid = @clientId + 1
         @connections[:clients][id] = client
         puts "got someone"
-        client.puts "Connection has been established"
-        get_and_send_position(id,client)
+        # client.puts "Connection has been established"
+        get_and_send_data(id, client)
       end
     }.join
 
@@ -52,7 +52,18 @@ class Server
       x = client.gets.chomp
       y = client.gets.chomp
       puts 'receive <' + x.to_s + ',' + y.to_s + '>'
-      sendToAll(id, x,y )
+      sendToAll(id, x, y)
+    }
+    end
+
+
+  def get_and_send_data(id, client)
+    loop {
+      size = client.gets.chomp
+      data = client.read(size.to_i)
+      puts data
+      puts "---------"
+      send_to_all(id, size,data)
     }
   end
 
@@ -60,6 +71,13 @@ class Server
     @connections[:clients].each do |id, other_client|
       other_client.puts x
       other_client.puts y
+    end
+  end
+
+  def send_to_all(fromId, size, params)
+    @connections[:clients].each do |id, other_client|
+      other_client.puts size
+      other_client.puts params
     end
   end
 

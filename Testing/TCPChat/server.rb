@@ -11,7 +11,6 @@ class Server
     @connections[:server] = @server
     @connections[:rooms] = @rooms
     @connections[:clients] = @clients
-
     run
   end
 

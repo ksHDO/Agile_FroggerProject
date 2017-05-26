@@ -64,4 +64,12 @@ class Player
   def setY(y)
     @y = y
   end
+
+  def angle
+    @angle
+  end
+
+  def setRotation(angle)
+    @angle = angle
+  end
 end
