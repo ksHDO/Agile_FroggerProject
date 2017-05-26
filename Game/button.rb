@@ -8,7 +8,6 @@ class Button < Clickable
   end
 
   def on_click()
-    puts 'Hello'
   end
 
   def draw()

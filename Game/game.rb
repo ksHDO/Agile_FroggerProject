@@ -46,17 +46,16 @@ class GameWindow < Window
     end
     if Input.button_pressed(Gosu::MS_LEFT)
       if @button1.intersects(self.mouse_x, self.mouse_y)
-        @button1.on_click
         @vehicle_player.cur_vehicles.push(Vehicle.new)
       end
       if @button2.intersects(self.mouse_x, self.mouse_y)
-        @button2.on_click
+        @vehicle_player.cur_vehicles.push(Vehicle.new)
       end
       if @button3.intersects(self.mouse_x, self.mouse_y)
-        @button3.on_click
+        @vehicle_player.cur_vehicles.push(Vehicle.new)
       end
       if @button4.intersects(self.mouse_x, self.mouse_y)
-        @button4.on_click
+        @vehicle_player.cur_vehicles.push(Vehicle.new)
       end
     end
     # must update input last
