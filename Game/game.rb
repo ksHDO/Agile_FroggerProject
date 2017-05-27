@@ -45,13 +45,25 @@ class GameWindow < Window
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
     if not $isFrog
-      puts "not frog"
-      net_frog
+      listen_to_server
     end
   end
 
+  def notify_server
+    if $isFrog
+      @currentFrameToSend = @currentFrameToSend + 1
+      if @currentFrameToSend >= @frameToSendOn
+        p = Packet.new
+        p.frog_x = @frog_player.x
+        p.frog_y = @frog_player.y
+        p.frog_angle = @frog_player.angle
+        @client.sendData p
+        @currentFrameToSend = 0
+      end
+    end
+  end
 
-  def net_frog()
+  def listen_to_server()
     @listenForInput = Thread.new do
       loop {
         if @client != nil
@@ -62,7 +74,6 @@ class GameWindow < Window
             @client = nil
             return
           end
-          # @player = packet02
           @frog_player.x = packet.frog_x
           @frog_player.y = packet.frog_y
           @frog_player.angle = packet.frog_angle
@@ -73,19 +84,7 @@ class GameWindow < Window
 
   def update
     if @client != nil
-      if $isFrog
-        @currentFrameToSend = @currentFrameToSend + 1
-        if @currentFrameToSend >= @frameToSendOn
-          # @client.sendInput(@player.x, @player.y)
-          p = Packet.new
-          p.frog_x = @frog_player.x
-          p.frog_y = @frog_player.y
-          p.frog_angle = @frog_player.angle
-          @client.sendData p
-          # @client.sendData @player
-          @currentFrameToSend = 0
-        end
-      end
+      notify_server
     end
 
     # must update collision first
