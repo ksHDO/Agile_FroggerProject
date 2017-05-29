@@ -11,7 +11,7 @@ class Client
     @server.close
   end
 
-  def get_pos_from_server
+  def get
     return @server.gets.chomp
   end
 

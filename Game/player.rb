@@ -109,13 +109,13 @@ class Vehicle
   attr_accessor :x, :y
 
   def initialize
-    @x = 1800
-    @y = 800 * rand
+    self.x = 1800
+    self.y = 800 * rand
     @image = Gosu::Image.new('../assets/images/car.png')
   end
 
   def draw
-    @image.draw(@x, @y, 1)
+    @image.draw(self.x, self.y, 1)
   end
 
   def move
@@ -124,17 +124,17 @@ class Vehicle
   end
 
   def x
-    return @x
+    return x
   end
 
   def setX(x)
-    @x = x
+    self.x = x
   end
   def y
-    return @y
+    return y
   end
   def setY(y)
-    @y = y
+    self.y = y
   end
 
   def angle

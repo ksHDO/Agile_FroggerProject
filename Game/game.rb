@@ -44,22 +44,32 @@ class GameWindow < Window
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
-    if not $isFrog
-      listen_to_server
-    end
+    $isFrog = 1 != @client.get.to_i
+    listen_to_server
+    # if not $isFrog
+    #   listen_to_server
+    # end
   end
 
   def notify_server
-    if $isFrog
-      @currentFrameToSend = @currentFrameToSend + 1
-      if @currentFrameToSend >= @frameToSendOn
-        p = Packet.new
+    @currentFrameToSend = @currentFrameToSend + 1
+    if @currentFrameToSend >= @frameToSendOn
+      p = Packet.new
+      if $isFrog
         p.frog_x = @frog_player.x
         p.frog_y = @frog_player.y
         p.frog_angle = @frog_player.angle
-        @client.sendData p
-        @currentFrameToSend = 0
+      else
+        # send vehicles
+        @vehicle_player.cur_vehicles.each do |vehicle|
+          p.vehicle_x.push vehicle.x
+          p.vehicle_y.push vehicle.y
+          p.vehicle_angle.push vehicle.angle
+        end
       end
+
+      @client.sendData p
+      @currentFrameToSend = 0
     end
   end
 
@@ -74,9 +84,24 @@ class GameWindow < Window
             @client = nil
             return
           end
-          @frog_player.x = packet.frog_x
-          @frog_player.y = packet.frog_y
-          @frog_player.angle = packet.frog_angle
+          if not $isFrog
+            @frog_player.x = packet.frog_x
+            @frog_player.y = packet.frog_y
+            @frog_player.angle = packet.frog_angle
+          else
+            # Receive vehicles here
+            for i in 0..packet.vehicle_x.count - 1
+              v = Vehicle.new
+              v.x = packet.vehicle_x[i]
+              v.y = packet.vehicle_y[i]
+              v.angle = packet.vehicle_angle[i]
+              @vehicle_player.cur_vehicles.push(v)
+            end
+            packet.vehicle_x.each do
+
+            end
+
+          end
         end
       }
     end
