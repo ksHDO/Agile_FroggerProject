@@ -14,10 +14,10 @@ class FrogPlayer < Player
   attr_accessor :x, :y
   attr_accessor :angle, :image
 
-  def initialize(x, y)
+  def initialize
     @image = Gosu::Image.new("../assets/images/gorf.png")
     @angle = 0.0
-    init_collision(x, y, @image)
+    init_collision(0, 0, @image)
     respawn
   end
 

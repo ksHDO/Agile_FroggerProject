@@ -37,7 +37,7 @@ class GameWindow < Window
     @button2 = Button.new(275,30,Gosu::Image.new('../assets/images/button2.png', :tileable => false, :retro => true))
     @button3 = Button.new(475,30,Gosu::Image.new('../assets/images/button3.png', :tileable => false, :retro => true))
     @button4 = Button.new(675,30,Gosu::Image.new('../assets/images/button4.png', :tileable => false, :retro => true))
-    @frog_player = FrogPlayer.new($window_x*rand, $window_y-20)
+    @frog_player = FrogPlayer.new
     @vehicle_player = VehiclePlayer.new(@button1)
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
