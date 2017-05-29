@@ -139,7 +139,7 @@ class Vehicle
     @angle
   end
 
-  def setRotation(angle)
+  def set_rotation(angle)
     @angle = angle
   end
 end

@@ -7,6 +7,7 @@ class CollisionDetection
   end
 
   def update
+    _collidables_to_remove = []
     @collidables.each_with_index do |collidable, i|
       @collidables.each_with_index do |collider, j|
         if i != j && collider.intersects(collidable)
@@ -18,9 +19,5 @@ class CollisionDetection
 
   def add_collidable(collidable)
     @collidables.push(collidable)
-  end
-
-  def remove_collidable(collidabe)
-
   end
 end
