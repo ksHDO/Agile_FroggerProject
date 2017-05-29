@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'gosu'
-# require 'celluloid/io'
 require 'socket'
 require 'securerandom'
 require '../Game/player'
@@ -20,8 +19,14 @@ $window_y = 900
 
 class GameWindow < Window
 
+  attr_accessor :view
+  attr_reader :menu_font
+
+
   def initialize
     super $window_x, $window_y
+    @view = :menu
+    @menu_font = Gosu::Font.new(50)
     self.caption = "Reggorf"
 
     begin
@@ -42,7 +47,7 @@ class GameWindow < Window
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
-    if not $isFrog
+    unless $isFrog
       listen_to_server
     end
   end
@@ -81,52 +86,61 @@ class GameWindow < Window
   end
 
   def update
-    if @client != nil
-      notify_server
+    if view == :menu && button_down?(Gosu::KbA)
+      self.view = :game
+    elsif view == :game
+      if @client != nil
+        notify_server
+      end
+      # must update collision first
+      @collision.update
+      @frog_player.update
+      @vehicle_player.update
+
+      press_event(@button1, self.mouse_x, self.mouse_y)
+      press_event(@button2, self.mouse_x, self.mouse_y)
+      press_event(@button3, self.mouse_x, self.mouse_y)
+      press_event(@button4, self.mouse_x, self.mouse_y)
+
+      # must update input last
+      Input.update
     end
+  end
 
-    # must update collision first
-    @collision.update
-
-    @frog_player.update
-    @vehicle_player.update
-
-      if @button1.is_pressed(self.mouse_x, self.mouse_y)
-        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
-        @vehicle_player.cur_vehicles.push(_vehicle)
-        @collision.add_collidable(_vehicle)
-      end
-
-      if @button2.is_pressed(self.mouse_x, self.mouse_y)
-        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
-        @vehicle_player.cur_vehicles.push(_vehicle)
-        @collision.add_collidable(_vehicle)
-      end
-
-      if @button3.is_pressed(self.mouse_x, self.mouse_y)
-        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
-        @vehicle_player.cur_vehicles.push(_vehicle)
-        @collision.add_collidable(_vehicle)
-      end
-
-      if @button4.is_pressed(self.mouse_x, self.mouse_y)
-        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
-        @vehicle_player.cur_vehicles.push(_vehicle)
-        @collision.add_collidable(_vehicle)
-      end
-
-    # must update input last
-    Input.update
+  def press_event(button, mouse_x, mouse_y)
+    if button.is_pressed(mouse_x, mouse_y)
+      _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
+      @vehicle_player.cur_vehicles.push(_vehicle)
+      @collision.add_collidable(_vehicle)
+    end
   end
 
   def draw
-    $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
-    @frog_player.draw
-    @button1.draw
-    @button2.draw
-    @button3.draw
-    @button4.draw
-    @vehicle_player.draw
+    if view == :menu
+      draw_menu
+    elsif view == :game
+      $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
+      @frog_player.draw
+      @button1.draw
+      @button2.draw
+      @button3.draw
+      @button4.draw
+      @vehicle_player.draw
+    end
+    
+  end
+
+  def draw_menu
+    menu_font_text = "REGGORFPress 'a' To Play"
+    menu_font_x_coordinate = $window_x/3
+    menu_font_y_coordinate = 100
+    menu_font_z_coordinate = 0
+    menu_font.draw(
+        menu_font_text,
+        menu_font_x_coordinate,
+        menu_font_y_coordinate,
+        menu_font_z_coordinate
+    )
   end
 
   def needs_cursor?
