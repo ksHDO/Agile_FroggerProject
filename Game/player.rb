@@ -2,56 +2,23 @@ require 'gosu'
 require '../Game/input'
 require '../Game/collidable'
 
-
 class Player
-  attr_accessor :x, :y
-
-  def initialize(xx, yy)
-    self.x = xx
-    self.y = yy
-  end
-
   def draw
-    @image.draw_rot(self.x, self.y, 1, @angle)
-  end
-
-  def on_collision(collider)
-    puts "There was a collision"
-  end
-
-  def turn_up
-    @angle = 0
-  end
-
-  def turn_down
-    @angle = 180
-  end
-
-  def turn_left
-    @angle = 270
-  end
-
-  def turn_right
-    @angle = 90
-  end
-
-  def move
-    _dx = Gosu.offset_x(@angle, 48)
-    _dy = Gosu.offset_y(@angle, 48)
-    self.x += _dx
-    self.y += _dy
-
-      # @aabb.update(_dx, _dy)
+    @image.draw_rot(@x + (@image.width / 2), @y + (@image.height / 2), 1, @angle)
   end
 end
 
 class FrogPlayer < Player
+  include Collidable
+
+  attr_accessor :x, :y
   attr_accessor :angle, :image
 
   def initialize(x, y)
     @image = Gosu::Image.new("../assets/images/gorf.png")
     @angle = 0.0
-    super(x, y)
+    init_collision(x, y, @image)
+    respawn
   end
 
   def update
@@ -70,12 +37,42 @@ class FrogPlayer < Player
     end
   end
 
-  def collides_with(car)
-    if ((self.x + 48  >= car.x) && (self.x <= car.x + 128)) && ((self.y + 48 >= car.y) && (self.y <= car.y + 128))
-      true
-    else
-      false
+  def on_collision(collider)
+    respawn
+  end
+
+  def respawn()
+    @x = rand((@image.width / 2)...$window_x)
+    @y = $window_y - @image.height - 1
+    @aabb.set_position(@x, @y)
+    @angle = 0
+  end
+
+  def move
+    _dx = Gosu.offset_x(@angle, @width)
+    _dy = Gosu.offset_y(@angle, @height)
+
+    if @x + _dx > 0 && @x +_dx + @width < $window_x && @y + _dy > 0 && @y +_dy + @height < $window_y
+      @x += _dx
+      @y += _dy
+      @aabb.update(_dx, _dy)
     end
+  end
+
+  def turn_up
+    @angle = 0
+  end
+
+  def turn_down
+    @angle = 180
+  end
+
+  def turn_left
+    @angle = 270
+  end
+
+  def turn_right
+    @angle = 90
   end
 end
 
@@ -88,7 +85,12 @@ class VehiclePlayer < Player
   end
 
   def update
-    move
+    @cur_vehicles.each do |car|
+      car.update
+      if car.x + car.width < 0
+        @cur_vehicles.delete(car)
+      end
+    end
   end
 
   def draw
@@ -96,45 +98,41 @@ class VehiclePlayer < Player
       car.draw
     end
   end
-
-  def move
-    @cur_vehicles.each do |car|
-      car.x -= 10
-    end
-  end
-
 end
 
 class Vehicle
+  include Collidable
+
   attr_accessor :x, :y
 
-  def initialize
-    @x = 1800
-    @y = 800 * rand
-    @image = Gosu::Image.new('../assets/images/car.png')
+  def initialize(x, y, speed)
+    @image = Gosu::Image.new('../assets/images/top2.0.png')
+    @x = x
+    @y = y
+    @speed = speed
+    @angle = -90
+    init_collision(x, y, @image)
+  end
+
+  def update
+    move
   end
 
   def draw
     @image.draw(@x, @y, 1)
   end
 
+  def on_collision(collider)
+    #maybe do stuff?
+  end
+
   def move
-    @x_location += Gosu.offset_x(@angle, 5)
-    @y_location += Gosu.offset_y(@angle, 5)
-  end
+    _dx = Gosu.offset_x(@angle, @speed)
+    _dy = Gosu.offset_y(@angle, @speed)
+    @x += _dx
+    @y += _dy
 
-  def x
-    return @x
-  end
-
-  def setX(x)
-    @x = x
-  end
-  def y
-    return @y
-  end
-  def setY(y)
-    @y = y
+    @aabb.update(_dx, _dy)
   end
 
   def angle

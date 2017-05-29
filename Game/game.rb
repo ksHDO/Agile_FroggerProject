@@ -11,7 +11,7 @@ require '../Game/button'
 
 include Gosu
 
-$background_image = Gosu::Image.new('../assets/images/bg.jpg', :tileable => false, :retro => true)
+$background_image = Gosu::Image.new('../assets/images/bg-temp.png', :tileable => false, :retro => true)
 $isFrog = true
 $serverIp = "localhost"
 $serverPort = 65509
@@ -30,8 +30,6 @@ class GameWindow < Window
       puts "Could not connect to server, running locally"
     end
 
-
-    @player = Player.new(($window_x)*rand, $window_y-20)
     @frameToSendOn = 2
     @currentFrameToSend = 0
 
@@ -93,29 +91,30 @@ class GameWindow < Window
     @frog_player.update
     @vehicle_player.update
 
-    @vehicle_player.cur_vehicles.each do |car|
-      if car.x < 0
-        @vehicle_player.cur_vehicles.delete(car)
+      if @button1.is_pressed(self.mouse_x, self.mouse_y)
+        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
+        @vehicle_player.cur_vehicles.push(_vehicle)
+        @collision.add_collidable(_vehicle)
       end
-      if @frog_player.collides_with(car)
-        @frog_player = FrogPlayer.new($window_x*rand, $window_y-20)
-        @vehicle_player.cur_vehicles.delete(car)
+
+      if @button2.is_pressed(self.mouse_x, self.mouse_y)
+        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
+        @vehicle_player.cur_vehicles.push(_vehicle)
+        @collision.add_collidable(_vehicle)
       end
-    end
-    if Input.button_pressed(Gosu::MS_LEFT)
-      if @button1.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
+
+      if @button3.is_pressed(self.mouse_x, self.mouse_y)
+        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
+        @vehicle_player.cur_vehicles.push(_vehicle)
+        @collision.add_collidable(_vehicle)
       end
-      if @button2.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
+
+      if @button4.is_pressed(self.mouse_x, self.mouse_y)
+        _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
+        @vehicle_player.cur_vehicles.push(_vehicle)
+        @collision.add_collidable(_vehicle)
       end
-      if @button3.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
-      end
-      if @button4.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
-      end
-    end
+
     # must update input last
     Input.update
   end
