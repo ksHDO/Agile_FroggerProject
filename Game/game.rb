@@ -22,7 +22,6 @@ class GameWindow < Window
   attr_accessor :view
   attr_reader :menu_font
 
-
   def initialize
     super $window_x, $window_y
     @view = :menu
@@ -86,8 +85,14 @@ class GameWindow < Window
   end
 
   def update
-    if view == :menu && button_down?(Gosu::KbA)
-      self.view = :game
+    if view == :menu
+      if button_down?(Gosu::KbF)
+        $isFrog=true
+        self.view = :game
+      elsif button_down?(Gosu::KbV)
+        $isFrog=false
+        self.view = :game
+      end
     elsif view == :game
       if @client != nil
         notify_server
@@ -131,7 +136,7 @@ class GameWindow < Window
   end
 
   def draw_menu
-    menu_font_text = "REGGORFPress 'a' To Play"
+    menu_font_text = "REGGORF Press 'f' For Frog or 'v' for Vehicle"
     menu_font_x_coordinate = $window_x/3
     menu_font_y_coordinate = 100
     menu_font_z_coordinate = 0
