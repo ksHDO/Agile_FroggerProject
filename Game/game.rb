@@ -1,6 +1,5 @@
 require 'rubygems'
 require 'gosu'
-# require 'celluloid/io'
 require 'socket'
 require 'securerandom'
 require '../Game/player'
@@ -11,7 +10,8 @@ require '../Game/button'
 
 include Gosu
 
-$background_image = Gosu::Image.new('../assets/images/bg.jpg', :tileable => false, :retro => true)
+$background_image = Gosu::Image.new('../assets/images/bg-temp.png', :tileable => false, :retro => true)
+# $main_menu_image = Gosu::Image.new('../assets/images/kermit.gif')
 $isFrog = true
 $serverIp = "localhost"
 $serverPort = 65509
@@ -20,8 +20,13 @@ $window_y = 900
 
 class GameWindow < Window
 
+  attr_accessor :view
+  attr_reader :menu_font
+
   def initialize
     super $window_x, $window_y
+    @view = :menu
+    @menu_font = Gosu::Font.new(50)
     self.caption = "Reggorf"
 
     begin
@@ -30,8 +35,6 @@ class GameWindow < Window
       puts "Could not connect to server, running locally"
     end
 
-
-    @player = Player.new(($window_x)*rand, $window_y-20)
     @frameToSendOn = 2
     @currentFrameToSend = 0
 
@@ -39,22 +42,23 @@ class GameWindow < Window
     @button2 = Button.new(275,30,Gosu::Image.new('../assets/images/button2.png', :tileable => false, :retro => true))
     @button3 = Button.new(475,30,Gosu::Image.new('../assets/images/button3.png', :tileable => false, :retro => true))
     @button4 = Button.new(675,30,Gosu::Image.new('../assets/images/button4.png', :tileable => false, :retro => true))
-    @frog_player = FrogPlayer.new($window_x*rand, $window_y-20)
+    @frog_player = FrogPlayer.new
     @vehicle_player = VehiclePlayer.new(@button1)
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
-    $isFrog = 1 != @client.get.to_i
-    listen_to_server
-    # if not $isFrog
-    #   listen_to_server
-    # end
+    unless $isFrog
+      listen_to_server
+    end
   end
 
   def notify_server
     @currentFrameToSend = @currentFrameToSend + 1
     if @currentFrameToSend >= @frameToSendOn
       p = Packet.new
+      p.vehicle_x = []
+      p.vehicle_y = []
+      p.vehicle_angle = []
       if $isFrog
         p.frog_x = @frog_player.x
         p.frog_y = @frog_player.y
@@ -62,9 +66,10 @@ class GameWindow < Window
       else
         # send vehicles
         @vehicle_player.cur_vehicles.each do |vehicle|
-          p.vehicle_x.push vehicle.x
-          p.vehicle_y.push vehicle.y
-          p.vehicle_angle.push vehicle.angle
+
+          p.vehicle_x.push(vehicle.x)
+          p.vehicle_y.push(vehicle.y)
+          p.vehicle_angle.push(vehicle.angle)
         end
       end
 
@@ -84,75 +89,97 @@ class GameWindow < Window
             @client = nil
             return
           end
-          if not $isFrog
-            @frog_player.x = packet.frog_x
-            @frog_player.y = packet.frog_y
-            @frog_player.angle = packet.frog_angle
+          if packet == nil
+            puts "Error receiving packet."
           else
-            # Receive vehicles here
-            for i in 0..packet.vehicle_x.count - 1
-              v = Vehicle.new
-              v.x = packet.vehicle_x[i]
-              v.y = packet.vehicle_y[i]
-              v.angle = packet.vehicle_angle[i]
-              @vehicle_player.cur_vehicles.push(v)
+            if not $isFrog
+              @frog_player.x = packet.frog_x
+              @frog_player.y = packet.frog_y
+              @frog_player.angle = packet.frog_angle
+            else
+              # Receive vehicles here
+              for i in 0..packet.vehicle_x.count - 1
+                v = Vehicle.new(packet.vehicle_x[i], packet.vehicle_y[i], packet.vehicle_angle[i])
+                @vehicle_player.cur_vehicles.push(v)
+              end
             end
-            packet.vehicle_x.each do
-
-            end
-
           end
+
         end
       }
     end
   end
 
   def update
-    if @client != nil
-      notify_server
-    end
+    if view == :menu
+      if button_down?(Gosu::KbF)
+        $isFrog=true
 
-    # must update collision first
-    @collision.update
+        self.view = :game
+      elsif button_down?(Gosu::KbV)
+        $isFrog=false
+        listen_to_server
+        self.view = :game
+      end
+    elsif view == :game
+      if @client != nil
+        notify_server
+      end
+      # must update collision first
+      @collision.update
+      # @frog_player.update(false)
+      @frog_player.update(!$isFrog)
+      @vehicle_player.update
 
-    @frog_player.update
-    @vehicle_player.update
+      press_event(@button1, self.mouse_x, self.mouse_y)
+      press_event(@button2, self.mouse_x, self.mouse_y)
+      press_event(@button3, self.mouse_x, self.mouse_y)
+      press_event(@button4, self.mouse_x, self.mouse_y)
 
-    @vehicle_player.cur_vehicles.each do |car|
-      if car.x < 0
-        @vehicle_player.cur_vehicles.delete(car)
-      end
-      if @frog_player.collides_with(car)
-        @frog_player = FrogPlayer.new($window_x*rand, $window_y-20)
-        @vehicle_player.cur_vehicles.delete(car)
-      end
+      # must update input last
+      Input.update
+    elsif view == :pause
+
     end
-    if Input.button_pressed(Gosu::MS_LEFT)
-      if @button1.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
-      end
-      if @button2.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
-      end
-      if @button3.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
-      end
-      if @button4.intersects(self.mouse_x, self.mouse_y)
-        @vehicle_player.cur_vehicles.push(Vehicle.new)
-      end
+  end
+
+  def press_event(button, mouse_x, mouse_y)
+    if button.is_pressed(mouse_x, mouse_y)
+      _vehicle = Vehicle.new($window_x, rand(0...$window_y),5)
+      @vehicle_player.cur_vehicles.push(_vehicle)
+      @collision.add_collidable(_vehicle)
     end
-    # must update input last
-    Input.update
   end
 
   def draw
-    $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
-    @frog_player.draw
-    @button1.draw
-    @button2.draw
-    @button3.draw
-    @button4.draw
-    @vehicle_player.draw
+    if view == :menu
+      draw_menu
+    elsif view == :game
+      $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
+      @frog_player.draw
+      @button1.draw
+      @button2.draw
+      @button3.draw
+      @button4.draw
+      @vehicle_player.draw
+    elsif view == :pause
+
+    end
+    
+  end
+
+  def draw_menu
+    # $main_menu_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
+    menu_font_text = "REGGORF Press 'f' For Frog or 'v' for Vehicle"
+    menu_font_x_coordinate = $window_x/3
+    menu_font_y_coordinate = 100
+    menu_font_z_coordinate = 0
+    menu_font.draw(
+        menu_font_text,
+        menu_font_x_coordinate,
+        menu_font_y_coordinate,
+        menu_font_z_coordinate
+    )
   end
 
   def needs_cursor?

@@ -1,21 +1,22 @@
 require '../Game/aabb'
 
-class Collidable
+module Collidable
 
-  def initialize(x, y, image)
+  attr_accessor :aabb
+  attr_accessor :width, :height
+
+  def init_collision(x, y, image)
     @aabb = AABB.new(x, y, image)
-  end
-
-  def on_collision(collider)
-
+    @width = image.width
+    @height = image.height
   end
 
   def intersects(collidable)
-    @aabb.intersects(collidable.get_aabb)
+    @aabb.intersects(collidable.aabb)
   end
 
-  def get_aabb
-    @aabb
+  def point_intersects(x, y)
+    @aabb.point_intersects(x, y)
   end
 
 end

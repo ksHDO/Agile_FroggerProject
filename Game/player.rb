@@ -2,21 +2,70 @@ require 'gosu'
 require '../Game/input'
 require '../Game/collidable'
 
-
 class Player
-  attr_accessor :x, :y
+  def draw
+    @image.draw_rot(@x + (@image.width / 2), @y + (@image.height / 2), 1, @angle)
+  end
+end
 
-  def initialize(xx, yy)
-    self.x = xx
-    self.y = yy
+class FrogPlayer < Player
+  include Collidable
+
+  attr_accessor :x, :y
+  attr_accessor :angle, :image
+
+  def initialize
+    @image = Gosu::Image.new("../assets/images/gorf.png")
+    @angle = 0.0
+    init_collision(0, 0, @image)
+    respawn
   end
 
-  def draw
-    @image.draw_rot(self.x, self.y, 1, @angle)
+  def update(isAi)
+    if isAi
+      choice = [method(:turn_up), method(:turn_up), method(:turn_up), method(:turn_down), method(:turn_left), method(:turn_right)].sample
+      if rand(10) == 4
+        choice.call
+        move
+      end
+    else
+      if Input.button_pressed(Gosu::KB_W) or Input.button_pressed(Gosu::Button::KbUp)
+        turn_up
+        move
+      elsif Input.button_pressed(Gosu::KB_A) or Input.button_pressed(Gosu::Button::KbLeft)
+        turn_left
+        move
+      elsif Input.button_pressed(Gosu::KB_S) or Input.button_pressed(Gosu::Button::KbDown)
+        turn_down
+        move
+      elsif Input.button_pressed(Gosu::KB_D) or Input.button_pressed(Gosu::Button::KbRight)
+        turn_right
+        move
+      end
+    end
+
   end
 
   def on_collision(collider)
-    puts "There was a collision"
+    respawn
+  end
+
+  def respawn()
+    @x = rand((@image.width / 2)...$window_x)
+    @y = $window_y - @image.height - 1
+    @aabb.set_position(@x, @y)
+    @angle = 0
+  end
+
+  def move
+    _dx = Gosu.offset_x(@angle, @width)
+    _dy = Gosu.offset_y(@angle, @height)
+
+    if @x + _dx > 0 && @x +_dx + @width < $window_x && @y + _dy > 0 && @y +_dy + @height < $window_y
+      @x += _dx
+      @y += _dy
+      @aabb.update(_dx, _dy)
+    end
   end
 
   def turn_up
@@ -35,47 +84,20 @@ class Player
     @angle = 90
   end
 
-  def move
-    _dx = Gosu.offset_x(@angle, 48)
-    _dy = Gosu.offset_y(@angle, 48)
-    self.x += _dx
-    self.y += _dy
-
-      # @aabb.update(_dx, _dy)
-  end
-end
-
-class FrogPlayer < Player
-  attr_accessor :angle, :image
-
-  def initialize(x, y)
-    @image = Gosu::Image.new("../assets/images/gorf.png")
-    @angle = 0.0
-    super(x, y)
+  def setX(x)
+    @x = x
   end
 
-  def update
-    if Input.button_pressed(Gosu::KB_W) or Input.button_pressed(Gosu::Button::KbUp)
-      turn_up
-      move
-    elsif Input.button_pressed(Gosu::KB_A) or Input.button_pressed(Gosu::Button::KbLeft)
-      turn_left
-      move
-    elsif Input.button_pressed(Gosu::KB_S) or Input.button_pressed(Gosu::Button::KbDown)
-      turn_down
-      move
-    elsif Input.button_pressed(Gosu::KB_D) or Input.button_pressed(Gosu::Button::KbRight)
-      turn_right
-      move
-    end
+  def setY(y)
+    @y = y
   end
 
-  def collides_with(car)
-    if ((self.x + 48  >= car.x) && (self.x <= car.x + 128)) && ((self.y + 48 >= car.y) && (self.y <= car.y + 128))
-      true
-    else
-      false
-    end
+  def x
+    @x
+  end
+
+  def y
+    @y
   end
 end
 
@@ -88,7 +110,12 @@ class VehiclePlayer < Player
   end
 
   def update
-    move
+    @cur_vehicles.each do |car|
+      car.update
+      if car.x + car.width < 0
+        @cur_vehicles.delete(car)
+      end
+    end
   end
 
   def draw
@@ -96,52 +123,62 @@ class VehiclePlayer < Player
       car.draw
     end
   end
-
-  def move
-    @cur_vehicles.each do |car|
-      car.x -= 10
-    end
-  end
-
 end
 
 class Vehicle
+  include Collidable
+
   attr_accessor :x, :y
 
-  def initialize
-    self.x = 1800
-    self.y = 800 * rand
-    @image = Gosu::Image.new('../assets/images/car.png')
+  def initialize(x, y, speed)
+    @image = Gosu::Image.new('../assets/images/top2.0.png')
+    @x = x
+    @y = y
+    @speed = speed
+    @angle = -90
+    init_collision(x, y, @image)
+  end
+
+  def update
+    move
   end
 
   def draw
     @image.draw(self.x, self.y, 1)
   end
 
-  def move
-    @x_location += Gosu.offset_x(@angle, 5)
-    @y_location += Gosu.offset_y(@angle, 5)
+  def on_collision(collider)
+    #maybe do stuff?
   end
 
   def x
-    return x
+    @x
   end
 
   def setX(x)
-    self.x = x
+    @x = x
   end
   def y
-    return y
+    @y
   end
   def setY(y)
-    self.y = y
+    @y = y
+  end
+
+  def move
+    _dx = Gosu.offset_x(@angle, @speed)
+    _dy = Gosu.offset_y(@angle, @speed)
+    @x += _dx
+    @y += _dy
+
+    @aabb.update(_dx, _dy)
   end
 
   def angle
     @angle
   end
 
-  def setRotation(angle)
+  def set_rotation(angle)
     @angle = angle
   end
 end
