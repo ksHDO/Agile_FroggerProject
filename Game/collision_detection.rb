@@ -2,6 +2,7 @@ require '../Game/collidable'
 
 class CollisionDetection
 
+
   def initialize(collidables)
     @collidables = collidables
   end
