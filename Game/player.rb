@@ -86,10 +86,9 @@ class FrogPlayer < Player
 end
 
 class VehiclePlayer < Player
-  attr_accessor :button, :cur_vehicles
+  attr_accessor :cur_vehicles
 
-  def initialize(button)
-    @button = button
+  def initialize()
     @cur_vehicles = []
   end
 
