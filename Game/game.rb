@@ -13,6 +13,7 @@ include Gosu
 $background_image = Gosu::Image.new('../assets/images/bg-temp.png', :tileable => false, :retro => true)
 # $main_menu_image = Gosu::Image.new('../assets/images/kermit.gif')
 $isFrog = true
+$isMultiplayer = false
 $serverIp = "localhost"
 $serverPort = 65509
 $window_x = 1600
@@ -128,7 +129,7 @@ class GameWindow < Window
       # must update collision first
       @collision.update
       # @frog_player.update(false)
-      @frog_player.update(!$isFrog)
+      @frog_player.update(!$isFrog, !$isMultiplayer)
       @vehicle_player.update
 
       press_event(@button1, self.mouse_x, self.mouse_y)
