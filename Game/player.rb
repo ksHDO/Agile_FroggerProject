@@ -43,6 +43,7 @@ class FrogPlayer < Player
         move
       end
     end
+
   end
 
   def on_collision(collider)
