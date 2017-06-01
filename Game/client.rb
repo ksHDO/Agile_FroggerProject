@@ -43,7 +43,6 @@ module ServerListener
 
   def initialize_listener
     initialize_client
-    listen_to_server
   end
 end
 
@@ -60,7 +59,7 @@ module ServerSender
     @current_frame_to_send += 1
     if @current_frame_to_send >= @frame_to_send_on
       @current_frame_to_send = 0
-      true
+      return true
     end
     false
   end
