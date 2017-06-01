@@ -21,29 +21,20 @@ class FrogPlayer < Player
     respawn
   end
 
-  def update(isAi)
-    if isAi
-      choice = [method(:turn_up), method(:turn_up), method(:turn_up), method(:turn_down), method(:turn_left), method(:turn_right)].sample
-      if rand(10) == 4
-        choice.call
-        move
-      end
-    else
-      if Input.button_pressed(Gosu::KB_W) or Input.button_pressed(Gosu::Button::KbUp)
-        turn_up
-        move
-      elsif Input.button_pressed(Gosu::KB_A) or Input.button_pressed(Gosu::Button::KbLeft)
-        turn_left
-        move
-      elsif Input.button_pressed(Gosu::KB_S) or Input.button_pressed(Gosu::Button::KbDown)
-        turn_down
-        move
-      elsif Input.button_pressed(Gosu::KB_D) or Input.button_pressed(Gosu::Button::KbRight)
-        turn_right
-        move
-      end
+  def update
+    if Input.button_pressed(Gosu::KB_W) or Input.button_pressed(Gosu::Button::KbUp)
+      turn_up
+      move
+    elsif Input.button_pressed(Gosu::KB_A) or Input.button_pressed(Gosu::Button::KbLeft)
+      turn_left
+      move
+    elsif Input.button_pressed(Gosu::KB_S) or Input.button_pressed(Gosu::Button::KbDown)
+      turn_down
+      move
+    elsif Input.button_pressed(Gosu::KB_D) or Input.button_pressed(Gosu::Button::KbRight)
+      turn_right
+      move
     end
-
   end
 
   def on_collision(collider)

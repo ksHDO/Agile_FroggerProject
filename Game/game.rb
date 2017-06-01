@@ -11,7 +11,6 @@ require '../Game/button'
 include Gosu
 
 $background_image = Gosu::Image.new('../assets/images/bg-temp.png', :tileable => false, :retro => true)
-# $main_menu_image = Gosu::Image.new('../assets/images/kermit.gif')
 $isFrog = true
 $serverIp = "localhost"
 $serverPort = 65509
@@ -100,7 +99,7 @@ class GameWindow < Window
       end
       # must update collision first
       @collision.update
-      @frog_player.update(!$isFrog)
+      @frog_player.update
       @vehicle_player.update
 
       press_event(@button1, self.mouse_x, self.mouse_y)
@@ -110,8 +109,6 @@ class GameWindow < Window
 
       # must update input last
       Input.update
-    elsif view == :pause
-
     end
   end
 
@@ -134,14 +131,11 @@ class GameWindow < Window
       @button3.draw
       @button4.draw
       @vehicle_player.draw
-    elsif view == :pause
-
     end
     
   end
 
   def draw_menu
-    # $main_menu_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
     menu_font_text = "REGGORF Press 'f' For Frog or 'v' for Vehicle"
     menu_font_x_coordinate = $window_x/3
     menu_font_y_coordinate = 100
