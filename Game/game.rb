@@ -12,8 +12,8 @@ include Gosu
 
 $background_image = Gosu::Image.new('../assets/images/bg-temp.png', :tileable => false, :retro => true)
 # $main_menu_image = Gosu::Image.new('../assets/images/kermit.gif')
-$isFrog = false
-$isMultiplayer = false
+$isFrog = true
+$isMultiplayer = true
 $serverIp = "localhost"
 $serverPort = 65509
 $window_x = 1600
@@ -39,10 +39,17 @@ class GameWindow < Window
     @frameToSendOn = 2
     @currentFrameToSend = 0
 
-    @button1 = Button.new(75,30,Gosu::Image.new('../assets/images/button1.png', :tileable => false, :retro => true))
-    @button2 = Button.new(275,30,Gosu::Image.new('../assets/images/button2.png', :tileable => false, :retro => true))
-    @button3 = Button.new(475,30,Gosu::Image.new('../assets/images/button3.png', :tileable => false, :retro => true))
-    @button4 = Button.new(675,30,Gosu::Image.new('../assets/images/button4.png', :tileable => false, :retro => true))
+    @button1 = Button.new(75, 30, Gosu::Image.new('../assets/images/button1.png', :tileable => false, :retro => true))
+    @button2 = Button.new(275, 30, Gosu::Image.new('../assets/images/button2.png', :tileable => false, :retro => true))
+    @button3 = Button.new(475, 30, Gosu::Image.new('../assets/images/button3.png', :tileable => false, :retro => true))
+    @button4 = Button.new(675, 30, Gosu::Image.new('../assets/images/button4.png', :tileable => false, :retro => true))
+
+    @isFrogButton = Button.new($window_x/2-110, $window_y/2, Gosu::Image.new('../assets/images/button_frog.png', :tileable => false, :retro => true))
+    @isVehicleButton = Button.new($window_x/2, $window_y/2, Gosu::Image.new('../assets/images/button_vehicle.png', :tileable => false, :retro => true))
+    @singlePlayerButton = Button.new($window_x/2-200, $window_y/2+100, Gosu::Image.new('../assets/images/button_single-player.png', :tileable => false, :retro => true))
+    @multiplayerButton = Button.new($window_x/2, $window_y/2+100, Gosu::Image.new('../assets/images/button_multi-player.png', :tileable => false, :retro => true))
+    @startButton = Button.new($window_x/2-100, $window_y/2+300, Gosu::Image.new('../assets/images/button_start.png', :tileable => false, :retro => true))
+
     @frog_player = FrogPlayer.new
     @vehicle_player = VehiclePlayer.new(@button1)
     @collision = CollisionDetection.new(Array.[](@frog_player))
@@ -88,11 +95,22 @@ class GameWindow < Window
 
   def update
     if view == :menu
-      if button_down?(Gosu::KbF)
-        $isFrog=true
-        self.view = :game
-      elsif button_down?(Gosu::KbV)
-        $isFrog=false
+      if @isFrogButton.is_pressed(self.mouse_x, self.mouse_y)
+        $isFrog = true
+      end
+      if @isVehicleButton.is_pressed(self.mouse_x, self.mouse_y)
+        $isFrog = false
+      end
+      if @singlePlayerButton.is_pressed(self.mouse_x, self.mouse_y)
+        $isMultiplayer = false
+      end
+      if @multiplayerButton.is_pressed(self.mouse_x, self.mouse_y)
+        $isMultiplayer = true
+      end
+      if @startButton.is_pressed(self.mouse_x, self.mouse_y)
+        if not $isFrog
+          listen_to_server
+        end
         self.view = :game
       end
     elsif view == :game
@@ -127,6 +145,11 @@ class GameWindow < Window
   def draw
     if view == :menu
       draw_menu
+      @isFrogButton.draw
+      @isVehicleButton.draw
+      @multiplayerButton.draw
+      @singlePlayerButton.draw
+      @startButton.draw
     elsif view == :game
       $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
       @frog_player.draw
@@ -135,16 +158,21 @@ class GameWindow < Window
       @button3.draw
       @button4.draw
       @vehicle_player.draw
-    elsif view == :pause
-
+      if not $isFrog
+        @button1.draw
+        @button2.draw
+        @button3.draw
+        @button4.draw
+        @vehicle_player.draw
+      end
     end
     
   end
 
   def draw_menu
     # $main_menu_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
-    menu_font_text = "REGGORF Press 'f' For Frog or 'v' for Vehicle"
-    menu_font_x_coordinate = $window_x/3
+    menu_font_text = "REGGORF"
+    menu_font_x_coordinate = $window_x/2- 120
     menu_font_y_coordinate = 100
     menu_font_z_coordinate = 0
     menu_font.draw(
