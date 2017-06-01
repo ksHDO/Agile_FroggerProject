@@ -21,8 +21,8 @@ class FrogPlayer < Player
     respawn
   end
 
-  def update(isAi)
-    if isAi
+  def update(isAi, isMultiplayer)
+    if isAi and !isMultiplayer
       choice = [method(:turn_up), method(:turn_up), method(:turn_up), method(:turn_down), method(:turn_left), method(:turn_right)].sample
       if rand(10) == 4
         choice.call
