@@ -93,6 +93,7 @@ class GameWindow < Window
             packet = @client.get_server
           rescue => ex
             puts "Lost connection to server, running locally"
+            puts "Exception: " + ex
             @client = nil
             return
           end
@@ -144,7 +145,7 @@ class GameWindow < Window
     # must update collision first
     @collision.update
     # @frog_player.update(false)
-    @frog_player.update(!$isFrog)
+    @frog_player.update(!$isFrog, $isMultiplayer)
     @vehicle_player.update
     if not $isFrog
       press_event(@button1, self.mouse_x, self.mouse_y)
