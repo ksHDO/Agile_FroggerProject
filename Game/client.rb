@@ -11,9 +11,9 @@ class Client
     @server.close
   end
 
-  def get_pos_from_server
-    return @server.gets.chomp
-  end
+  # def get
+  #   return @server.gets.chomp
+  # end
 
   def get_server
     size = @server.gets.chomp

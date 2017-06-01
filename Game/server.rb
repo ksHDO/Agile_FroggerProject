@@ -29,7 +29,7 @@ class Server
     loop {
       Thread.start(@server.accept) do |client|
         id = @clientId
-        @clientid = @clientId + 1
+        @clientId = @clientId + 1
         @connections[:clients][id] = client
         puts "got someone"
         get_and_send_data(id, client)
@@ -50,8 +50,10 @@ class Server
 
   def send_to_all(fromId, size, params)
     @connections[:clients].each do |id, other_client|
-      other_client.puts size
-      other_client.puts params
+      if id != fromId
+        other_client.puts size
+        other_client.puts params
+      end
     end
   end
 

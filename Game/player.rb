@@ -21,10 +21,10 @@ class FrogPlayer < Player
     respawn
   end
 
-  def update(isAi)
-    if isAi
+  def update(isAi, isMultiplayer)
+    if isAi and not isMultiplayer
       choice = [method(:turn_up), method(:turn_up), method(:turn_up), method(:turn_down), method(:turn_left), method(:turn_right)].sample
-      if rand(10) == 4
+      if rand(20) == 4
         choice.call
         move
       end
@@ -83,6 +83,22 @@ class FrogPlayer < Player
   def turn_right
     @angle = 90
   end
+
+  def setX(x)
+    @x = x
+  end
+
+  def setY(y)
+    @y = y
+  end
+
+  def x
+    @x
+  end
+
+  def y
+    @y
+  end
 end
 
 class VehiclePlayer < Player
@@ -129,11 +145,25 @@ class Vehicle
   end
 
   def draw
-    @image.draw(@x, @y, 1)
+    @image.draw(self.x, self.y, 1)
   end
 
   def on_collision(collider)
     #maybe do stuff?
+  end
+
+  def x
+    @x
+  end
+
+  def setX(x)
+    @x = x
+  end
+  def y
+    @y
+  end
+  def setY(y)
+    @y = y
   end
 
   def move
