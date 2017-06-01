@@ -10,7 +10,9 @@ class CollisionDetection
     _collidables_to_remove = []
     @collidables.each_with_index do |collidable, i|
       @collidables.each_with_index do |collider, j|
-        if i != j && collider.intersects(collidable)
+        if collidable.is_dead
+          @collidables.delete(collidable)
+        elsif i != j && collider.intersects(collidable)
           collidable.on_collision(collider)
         end
       end

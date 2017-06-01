@@ -97,6 +97,7 @@ class VehiclePlayer < Player
     @cur_vehicles.each do |car|
       car.update
       if car.x + car.width < 0
+        car.is_dead = true
         @cur_vehicles.delete(car)
       end
     end
