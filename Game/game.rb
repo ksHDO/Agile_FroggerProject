@@ -63,21 +63,21 @@ class GameWindow < Window
     @currentFrameToSend = @currentFrameToSend + 1
     if @currentFrameToSend >= @frameToSendOn
       p = Packet.new
-      p.vehicle_x = []
-      p.vehicle_y = []
-      p.vehicle_angle = []
+      # p.vehicle_x = []
+      # p.vehicle_y = []
+      # p.vehicle_angle = []
       if $isFrog
         p.frog_x = @frog_player.x
         p.frog_y = @frog_player.y
         p.frog_angle = @frog_player.angle
-      else
-        # send vehicles
-        @vehicle_player.cur_vehicles.each do |vehicle|
-
-          p.vehicle_x.push(vehicle.x)
-          p.vehicle_y.push(vehicle.y)
-          p.vehicle_angle.push(vehicle.angle)
-        end
+      # else
+      #   # send vehicles
+      #   @vehicle_player.cur_vehicles.each do |vehicle|
+      #
+      #     p.vehicle_x.push(vehicle.x)
+      #     p.vehicle_y.push(vehicle.y)
+      #     p.vehicle_angle.push(vehicle.angle)
+      #   end
       end
 
       @client.sendData p
@@ -104,13 +104,13 @@ class GameWindow < Window
               @frog_player.x = packet.frog_x
               @frog_player.y = packet.frog_y
               @frog_player.angle = packet.frog_angle
-            else
-              # Receive vehicles here
-              for i in 0..packet.vehicle_x.count - 1
-                v = Vehicle.new(packet.vehicle_x[i], packet.vehicle_y[i], packet.vehicle_angle[i])
-                @vehicle_player.cur_vehicles.push(v)
-              end
             end
+          #     # Receive vehicles here
+          #     for i in 0..packet.vehicle_x.count - 1
+          #       v = Vehicle.new(packet.vehicle_x[i], packet.vehicle_y[i], packet.vehicle_angle[i])
+          #       @vehicle_player.cur_vehicles.push(v)
+          #     end
+          #   end
           end
 
         end

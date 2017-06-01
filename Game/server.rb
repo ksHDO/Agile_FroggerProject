@@ -32,7 +32,6 @@ class Server
         @clientId = @clientId + 1
         @connections[:clients][id] = client
         puts "got someone"
-        client.puts @clientId
         get_and_send_data(id, client)
       end
     }.join
