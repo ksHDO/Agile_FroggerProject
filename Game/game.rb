@@ -42,6 +42,7 @@ class GameWindow < Window
     @button2 = Button.new(275, 30, Gosu::Image.new('../assets/images/button2.png', :tileable => false, :retro => true))
     @button3 = Button.new(475, 30, Gosu::Image.new('../assets/images/button3.png', :tileable => false, :retro => true))
     @button4 = Button.new(675, 30, Gosu::Image.new('../assets/images/button4.png', :tileable => false, :retro => true))
+    @sfxSelect = Sample.new('../assets/sfx/select.wav')
 
     @frog_button = Button.new($window_x/2-110, $window_y/2, Gosu::Image.new('../assets/images/button_frog.png', :tileable => false, :retro => true))
     @vehicle_button = Button.new($window_x/2, $window_y/2, Gosu::Image.new('../assets/images/button_vehicle.png', :tileable => false, :retro => true))
@@ -54,6 +55,7 @@ class GameWindow < Window
     @vehicle_player = VehiclePlayer.new(@button1)
     @vehicle_player_cooldown = 4.0
     @vehicle_player_cooltime = 0.0
+    @canSpawnVehicle = true
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
@@ -154,6 +156,7 @@ class GameWindow < Window
         @vehicle_player_cooltime -= Gosu::milliseconds() * 0.00001
         if @vehicle_player_cooltime <= 0.0
           @canSpawnVehicle = true
+          @sfxSelect.play
         end
       else
         press_event(@button1, self.mouse_x, self.mouse_y)
@@ -192,10 +195,11 @@ def draw
     $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
     @frog_player.draw
     if not $isFrog
-      @button1.draw
-      @button2.draw
-      @button3.draw
-      @button4.draw
+      opacity = 1 - @vehicle_player_cooltime/@vehicle_player_cooldown
+      @button1.draw(opacity)
+      @button2.draw(opacity)
+      @button3.draw(opacity)
+      @button4.draw(opacity)
     end
     @vehicle_player.draw
   elsif view == :pause

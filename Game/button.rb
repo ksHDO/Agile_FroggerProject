@@ -10,8 +10,9 @@ class Button
     init_collision(x,y,image)
   end
 
-  def draw()
-    @image.draw(@x, @y, 1)
+  def draw(opacity = 1)
+    color = Gosu::Color.new(opacity * 255, 255, 255, 255)
+    @image.draw(@x, @y, 1, 1, 1, color)
   end
 
   def is_pressed(x, y)
