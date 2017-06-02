@@ -165,6 +165,11 @@ class GameWindow < Window
         press_event(@button4, self.mouse_x, self.mouse_y, SpecialVroom, 'mod')
       end
     end
+    if !$isMultiplayer and $isFrog
+      if rand(25) == 4
+        push_car
+      end
+    end
     # must update input last
     Input.update
   end
@@ -184,10 +189,22 @@ def press_event(button, mouse_x, mouse_y, classtype, operation)
       @canSpawnVehicle = false
       @vehicle_player_cooltime = @vehicle_player_cooldown
     end
-
   end
 end
+def push_car
+  classtype = [Vehicle, SpecialVroom].sample
+  operation = ['add','multiply', 'mod'].sample
+  if classtype == Vehicle
+    _vehicle = Vehicle.new($window_x, rand(0...$window_y), 5)
+  elsif classtype == SpecialVroom
+    _vehicle = SpecialVroom.new($window_x, rand(0...$window_y), 5, operation)
+  end
 
+  @vehicle_player.cur_vehicles.push(_vehicle)
+  @collision.add_collidable(_vehicle)
+  @canSpawnVehicle = false
+  @vehicle_player_cooltime = @vehicle_player_cooldown
+end
 def draw
   if view == :menu
     draw_menu
