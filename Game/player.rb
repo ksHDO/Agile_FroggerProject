@@ -84,21 +84,6 @@ class FrogPlayer < Player
     @angle = 90
   end
 
-  def setX(x)
-    @x = x
-  end
-
-  def setY(y)
-    @y = y
-  end
-
-  def x
-    @x
-  end
-
-  def y
-    @y
-  end
 end
 
 class VehiclePlayer < Player
@@ -129,7 +114,7 @@ end
 class Vehicle
   include Collidable
 
-  attr_accessor :x, :y
+  attr_accessor :x, :y, :angle
 
   def initialize(x, y, speed)
     @image = Gosu::Image.new('../assets/images/top2.0.png')
