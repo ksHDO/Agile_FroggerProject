@@ -12,7 +12,7 @@ class Button
 
   def draw(opacity = 1)
     color = Gosu::Color.new(opacity * 255, 255, 255, 255)
-    @image.draw(@x, @y, 1, 1, 1, color)
+    @image.draw(@x, @y, 2, 1, 1, color)
   end
 
   def is_pressed(x, y)
