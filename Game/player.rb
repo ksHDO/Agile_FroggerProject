@@ -62,7 +62,7 @@ class FrogPlayer < Player
   end
 
   def respawn()
-    @x = rand((@imageForward.width / 2)...$window_x)
+    @x = rand((@imageForward.width / 2)...$window_x - 100)
     @y = $window_y - @imageForward.height - 1
     @aabb.set_position(@x, @y)
     @angle = 0

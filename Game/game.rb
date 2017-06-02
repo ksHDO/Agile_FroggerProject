@@ -29,11 +29,11 @@ class GameWindow < Window
     @menu_font = Gosu::Font.new(50)
     self.caption = "Reggorf"
 
-    begin
-      @client = Client.new($serverIp, $serverPort)
-    rescue => ex
-      puts "Could not connect to server, running locally"
-    end
+    # begin
+    #   @client = Client.new($serverIp, $serverPort)
+    # rescue => ex
+    #   puts "Could not connect to server, running locally"
+    # end
 
     @frameToSendOn = 2
     @currentFrameToSend = 0
@@ -46,7 +46,7 @@ class GameWindow < Window
 
     @frog_button = Button.new($window_x/2-110, $window_y/2, Gosu::Image.new('../assets/images/button_frog.png', :tileable => false, :retro => true))
     @vehicle_button = Button.new($window_x/2, $window_y/2, Gosu::Image.new('../assets/images/button_vehicle.png', :tileable => false, :retro => true))
-    @single_player_button = Button.new($window_x/2-200, $window_y/2+100, Gosu::Image.new('../assets/images/button_single-player.png', :tileable => false, :retro => true))
+    @single_player_button = Button.new($window_x/2-100, $window_y/2+100, Gosu::Image.new('../assets/images/button_single-player.png', :tileable => false, :retro => true))
     @multi_player_button = Button.new($window_x/2, $window_y/2+100, Gosu::Image.new('../assets/images/button_multi-player.png', :tileable => false, :retro => true))
     @start_button = Button.new($window_x/2-100, $window_y/2+300, Gosu::Image.new('../assets/images/button_start.png', :tileable => false, :retro => true))
 
@@ -59,7 +59,7 @@ class GameWindow < Window
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
-    listen_to_server
+    # listen_to_server
 
   end
 
@@ -137,15 +137,15 @@ class GameWindow < Window
         $isMultiplayer = true
       end
       if @start_button.is_pressed(self.mouse_x, self.mouse_y)
-        if $isMultiplayer and not $isFrog
-          listen_to_server
-        end
+        # if $isMultiplayer and not $isFrog
+        #   listen_to_server
+        # end
         self.view = :game
       end
     elsif view == :game
-    if @client != nil
-      notify_server
-    end
+    # if @client != nil
+    #   notify_server
+    # end
     # must update collision first
     @collision.update
     # @frog_player.update(false)
@@ -174,9 +174,9 @@ def press_event(button, mouse_x, mouse_y, classtype, operation)
   if button.is_pressed(mouse_x, mouse_y)
     if @canSpawnVehicle
       if classtype == Vehicle
-      _vehicle = Vehicle.new($window_x, rand(0...$window_y), 5)
+      _vehicle = Vehicle.new($window_x, rand(100...$window_y - 200), 5)
       elsif classtype == SpecialVroom
-        _vehicle = SpecialVroom.new($window_x, rand(0...$window_y), 5, operation)
+        _vehicle = SpecialVroom.new($window_x, rand(100...$window_y - 200), 5, operation)
       end
 
       @vehicle_player.cur_vehicles.push(_vehicle)
