@@ -43,11 +43,12 @@ class GameWindow < Window
     @button3 = Button.new(475, 30, Gosu::Image.new('../assets/images/button3.png', :tileable => false, :retro => true))
     @button4 = Button.new(675, 30, Gosu::Image.new('../assets/images/button4.png', :tileable => false, :retro => true))
 
-    @frog_button = Button.new(75, 30, Gosu::Image.new('../assets/images/button_frog.png', :tileable => false, :retro => true))
-    @vehicle_button = Button.new(275, 30, Gosu::Image.new('../assets/images/button_vehicle.png', :tileable => false, :retro => true))
-    @single_player_button = Button.new(475, 30, Gosu::Image.new('../assets/images/button_single-player.png', :tileable => false, :retro => true))
-    @multi_player_button = Button.new(675, 30, Gosu::Image.new('../assets/images/button_multi-player.png', :tileable => false, :retro => true))
-    @start_button = Button.new(875, 30, Gosu::Image.new('../assets/images/button_start.png', :tileable => false, :retro => true))
+    @frog_button = Button.new($window_x/2-110, $window_y/2, Gosu::Image.new('../assets/images/button_frog.png', :tileable => false, :retro => true))
+    @vehicle_button = Button.new($window_x/2, $window_y/2, Gosu::Image.new('../assets/images/button_vehicle.png', :tileable => false, :retro => true))
+    @single_player_button = Button.new($window_x/2-200, $window_y/2+100, Gosu::Image.new('../assets/images/button_single-player.png', :tileable => false, :retro => true))
+    @multi_player_button = Button.new($window_x/2, $window_y/2+100, Gosu::Image.new('../assets/images/button_multi-player.png', :tileable => false, :retro => true))
+    @start_button = Button.new($window_x/2-100, $window_y/2+300, Gosu::Image.new('../assets/images/button_start.png', :tileable => false, :retro => true))
+    
 
     @frog_player = FrogPlayer.new
     @vehicle_player = VehiclePlayer.new(@button1)
