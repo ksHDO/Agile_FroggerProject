@@ -122,18 +122,22 @@ class VehiclePlayer < Player
   end
 end
 
+$vehicleImage = nil
 class Vehicle
   include Collidable
 
-  attr_accessor :x, :y, :angle
+  attr_accessor :x, :y, :angle, :speed
 
   def initialize(x, y, speed)
-    @imageForward = Gosu::Image.new('../assets/images/top2.0.png')
+    if $vehicleImage == nil
+      $vehicleImage = Gosu::Image.new('../assets/images/top2.0.png')
+    end
+    @image = $vehicleImage
     @x = x
     @y = y
     @speed = speed
     @angle = -90
-    init_collision(x, y, @imageForward)
+    init_collision(x, y, @image)
   end
 
   def update
@@ -141,25 +145,11 @@ class Vehicle
   end
 
   def draw
-    @imageForward.draw(self.x, self.y, 1)
+    @image.draw(self.x, self.y, 1)
   end
 
   def on_collision(collider)
     #maybe do stuff?
-  end
-
-  def x
-    @x
-  end
-
-  def setX(x)
-    @x = x
-  end
-  def y
-    @y
-  end
-  def setY(y)
-    @y = y
   end
 
   def move
@@ -170,12 +160,39 @@ class Vehicle
 
     @aabb.update(_dx, _dy)
   end
+end
+class SpecialVroom < Vehicle
 
-  def angle
-    @angle
+  attr_accessor :typeOfMovement
+
+  def initialize(x,y,speed, typeOfMovement)
+    super(x,y,speed)
+    @typeOfMovement = typeOfMovement
+  end
+  def update
+    super
+    if @typeOfMovement == 'add'
+      @angle += Gosu::milliseconds() * 0.1
+    elsif @typeOfMovement == 'multiply'
+      @angle = Math.gamma(Gosu::milliseconds() * 0.1)
+    elsif @typeOfMovement == 'mod'
+      @angle %= Gosu::milliseconds() * 0.1
+    end
+    if @angle > (2**(0.size * 8 -2) -1)
+    @angle = 1
+    end
+  end
+  def draw
+    super
   end
 
-  def set_rotation(angle)
-    @angle = angle
+  def move
+    _dx = Gosu.offset_x(-90, @speed)
+    _dy = Gosu.offset_y(@angle, @speed)
+    @x += _dx
+    @y += _dy
+
+    @aabb.update(_dx, _dy)
   end
+
 end

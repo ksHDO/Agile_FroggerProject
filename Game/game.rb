@@ -69,7 +69,7 @@ class GameWindow < Window
       p = Packet.new
       p.vehicle_x = []
       p.vehicle_y = []
-      p.vehicle_angle = []
+      p.vehicle_speed = []
       if $isFrog
         p.frog_x = @frog_player.x
         p.frog_y = @frog_player.y
@@ -80,7 +80,7 @@ class GameWindow < Window
 
           p.vehicle_x.push(vehicle.x)
           p.vehicle_y.push(vehicle.y)
-          p.vehicle_angle.push(vehicle.angle)
+          p.vehicle_speed.push(vehicle.speed)
         end
       end
 
@@ -112,7 +112,7 @@ class GameWindow < Window
               # Receive vehicles here
               @vehicle_player.cur_vehicles= []
               for i in 0..packet.vehicle_x.count - 1
-                v = Vehicle.new(packet.vehicle_x[i], packet.vehicle_y[i], packet.vehicle_angle[i])
+                v = Vehicle.new(packet.vehicle_x[i], packet.vehicle_y[i], packet.vehicle_speed[i])
                 @vehicle_player.cur_vehicles.push(v)
               end
             end
@@ -159,10 +159,10 @@ class GameWindow < Window
           @sfxSelect.play
         end
       else
-        press_event(@button1, self.mouse_x, self.mouse_y)
-        press_event(@button2, self.mouse_x, self.mouse_y)
-        press_event(@button3, self.mouse_x, self.mouse_y)
-        press_event(@button4, self.mouse_x, self.mouse_y)
+        press_event(@button1, self.mouse_x, self.mouse_y, Vehicle, nil)
+        press_event(@button2, self.mouse_x, self.mouse_y, SpecialVroom, 'add')
+        press_event(@button3, self.mouse_x, self.mouse_y, SpecialVroom, 'multiply')
+        press_event(@button4, self.mouse_x, self.mouse_y, SpecialVroom, 'mod')
       end
     end
     # must update input last
@@ -170,10 +170,15 @@ class GameWindow < Window
   end
 end
 
-def press_event(button, mouse_x, mouse_y)
+def press_event(button, mouse_x, mouse_y, classtype, operation)
   if button.is_pressed(mouse_x, mouse_y)
     if @canSpawnVehicle
+      if classtype == Vehicle
       _vehicle = Vehicle.new($window_x, rand(0...$window_y), 5)
+      elsif classtype == SpecialVroom
+        _vehicle = SpecialVroom.new($window_x, rand(0...$window_y), 5, operation)
+      end
+
       @vehicle_player.cur_vehicles.push(_vehicle)
       @collision.add_collidable(_vehicle)
       @canSpawnVehicle = false
@@ -189,7 +194,7 @@ def draw
     @frog_button.draw
     @vehicle_button.draw
     @single_player_button.draw
-    @multi_player_button.draw
+    # @multi_player_button.draw
     @start_button.draw
   elsif view == :game
     $background_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
