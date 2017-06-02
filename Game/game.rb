@@ -48,10 +48,12 @@ class GameWindow < Window
     @single_player_button = Button.new($window_x/2-200, $window_y/2+100, Gosu::Image.new('../assets/images/button_single-player.png', :tileable => false, :retro => true))
     @multi_player_button = Button.new($window_x/2, $window_y/2+100, Gosu::Image.new('../assets/images/button_multi-player.png', :tileable => false, :retro => true))
     @start_button = Button.new($window_x/2-100, $window_y/2+300, Gosu::Image.new('../assets/images/button_start.png', :tileable => false, :retro => true))
-    
+
 
     @frog_player = FrogPlayer.new
     @vehicle_player = VehiclePlayer.new(@button1)
+    @vehicle_player_cooldown = 4.0
+    @vehicle_player_cooltime = 0.0
     @collision = CollisionDetection.new(Array.[](@frog_player))
     # @font = Font.new(self, 'Courier New', 20)  # for the player names
 
@@ -148,10 +150,17 @@ class GameWindow < Window
     @frog_player.update(!$isFrog, $isMultiplayer)
     @vehicle_player.update
     if not $isFrog
-      press_event(@button1, self.mouse_x, self.mouse_y)
-      press_event(@button2, self.mouse_x, self.mouse_y)
-      press_event(@button3, self.mouse_x, self.mouse_y)
-      press_event(@button4, self.mouse_x, self.mouse_y)
+      if not @canSpawnVehicle
+        @vehicle_player_cooltime -= Gosu::milliseconds() * 0.00001
+        if @vehicle_player_cooltime <= 0.0
+          @canSpawnVehicle = true
+        end
+      else
+        press_event(@button1, self.mouse_x, self.mouse_y)
+        press_event(@button2, self.mouse_x, self.mouse_y)
+        press_event(@button3, self.mouse_x, self.mouse_y)
+        press_event(@button4, self.mouse_x, self.mouse_y)
+      end
     end
     # must update input last
     Input.update
@@ -160,9 +169,14 @@ end
 
 def press_event(button, mouse_x, mouse_y)
   if button.is_pressed(mouse_x, mouse_y)
-    _vehicle = Vehicle.new($window_x, rand(0...$window_y), 5)
-    @vehicle_player.cur_vehicles.push(_vehicle)
-    @collision.add_collidable(_vehicle)
+    if @canSpawnVehicle
+      _vehicle = Vehicle.new($window_x, rand(0...$window_y), 5)
+      @vehicle_player.cur_vehicles.push(_vehicle)
+      @collision.add_collidable(_vehicle)
+      @canSpawnVehicle = false
+      @vehicle_player_cooltime = @vehicle_player_cooldown
+    end
+
   end
 end
 
