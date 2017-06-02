@@ -4,7 +4,15 @@ require '../Game/collidable'
 
 class Player
   def draw
-    @image.draw_rot(@x + (@image.width / 2), @y + (@image.height / 2), 1, @angle)
+    if @angle == 0.0
+      @imageForward.draw(@x + (@imageForward.width / 2), @y + (@imageForward.height / 2), 1)
+    elsif @angle == 180
+      @imageBack.draw(@x + (@imageBack.width / 2), @y + (@imageBack.height / 2), 1)
+    elsif @angle == 270
+      @imageLeft.draw(@x + (@imageLeft.width / 2), @y + (@imageLeft.height / 2), 1)
+    elsif @angle == 90
+      @imageRight.draw(@x + (@imageRight.width / 2), @y + (@imageRight.height / 2), 1)
+    end
   end
 end
 
@@ -12,12 +20,15 @@ class FrogPlayer < Player
   include Collidable
 
   attr_accessor :x, :y
-  attr_accessor :angle, :image
+  attr_accessor :angle, :imageForward
 
   def initialize
-    @image = Gosu::Image.new("../assets/images/gorf.png")
+    @imageForward = Gosu::Image.new("../assets/images/frog3.png")
+    @imageBack = Gosu::Image.new("../assets/images/frog1.png")
+    @imageRight = Gosu::Image.new("../assets/images/frog2.png")
+    @imageLeft = Gosu::Image.new("../assets/images/frog4.png")
     @angle = 0.0
-    init_collision(0, 0, @image)
+    init_collision(0, 0, @imageForward)
     respawn
   end
 
@@ -51,8 +62,8 @@ class FrogPlayer < Player
   end
 
   def respawn()
-    @x = rand((@image.width / 2)...$window_x)
-    @y = $window_y - @image.height - 1
+    @x = rand((@imageForward.width / 2)...$window_x)
+    @y = $window_y - @imageForward.height - 1
     @aabb.set_position(@x, @y)
     @angle = 0
   end
@@ -117,12 +128,12 @@ class Vehicle
   attr_accessor :x, :y, :angle
 
   def initialize(x, y, speed)
-    @image = Gosu::Image.new('../assets/images/top2.0.png')
+    @imageForward = Gosu::Image.new('../assets/images/top2.0.png')
     @x = x
     @y = y
     @speed = speed
     @angle = -90
-    init_collision(x, y, @image)
+    init_collision(x, y, @imageForward)
   end
 
   def update
@@ -130,7 +141,7 @@ class Vehicle
   end
 
   def draw
-    @image.draw(self.x, self.y, 1)
+    @imageForward.draw(self.x, self.y, 1)
   end
 
   def on_collision(collider)
