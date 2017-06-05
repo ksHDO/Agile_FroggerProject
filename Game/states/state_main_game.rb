@@ -157,10 +157,13 @@ class StateMainGame
           @sfxSelect.play
         end
       else
-        press_event(@btnVehicle1, Input.mouse_x, Input.mouse_y, Vehicle, nil)
-        press_event(@btnVehicle2, Input.mouse_x, Input.mouse_y, SpecialVroom, 'add')
-        press_event(@btnVehicle3, Input.mouse_x, Input.mouse_y, SpecialVroom, 'multiply')
-        press_event(@btnVehicle4, Input.mouse_x, Input.mouse_y, SpecialVroom, 'mod')
+        if @canSpawnVehicle
+          check_spawn_car(@btnVehicle1, Gosu::KB_4, Vehicle, nil)
+          check_spawn_car(@btnVehicle2, Gosu::KB_1, SpecialVroom, 'add')
+          check_spawn_car(@btnVehicle3, Gosu::KB_2, SpecialVroom, 'multiply')
+          check_spawn_car(@btnVehicle4, Gosu::KB_3, SpecialVroom, 'mod')
+        end
+
       end
     end
     if !@isMultiplayer and @isFrog
@@ -187,11 +190,10 @@ class StateMainGame
     end
   end
 
-  def press_event(button, mouse_x, mouse_y, classtype, operation)
-    if button.is_pressed(mouse_x, mouse_y)
-      if @canSpawnVehicle
+
+  def check_spawn_car(button, key, classtype, operation)
+    if button.is_pressed(Input.mouse_x, Input.mouse_y)or Input.button_pressed key
         spawn_car(classtype, operation)
-      end
     end
   end
 
