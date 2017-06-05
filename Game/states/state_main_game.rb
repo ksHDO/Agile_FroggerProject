@@ -23,6 +23,8 @@ class StateMainGame
       @p = Packet.new
       listen_to_server
       @createVehicle = false
+      @createVehicleIsSpecial = false
+      @createVehicleOperation = ''
       @createVehicleX = 0
       @createVehicleY = 0
       @createVehicleSpeed = 0
@@ -74,7 +76,7 @@ class StateMainGame
     @p.frog_angle = @frog_player.angle
   end
 
-  def notify_server_vehicle(vehicle)
+  def notify_server_vehicle(vehicle, is_special, operation)
     # @p.vehicle_x = []
     # @p.vehicle_y = []
     # @p.vehicle_speed = []
@@ -83,9 +85,12 @@ class StateMainGame
     #   @p.vehicle_y.push(vehicle.y)
     #   @p.vehicle_speed.push(vehicle.speed)
     # end
+    # @p.vehicle_is_special = is_special
+    # @p.vehicle_operation = operation
     @p.vehicle_x = vehicle.x
     @p.vehicle_y = vehicle.y
     @p.vehicle_speed = vehicle.speed
+
     @client.sendData @p
   end
 
@@ -93,6 +98,7 @@ class StateMainGame
     @listenForInput = Thread.new do
       loop {
         if @client != nil
+          packet = nil
           begin
             packet = @client.get_server
           rescue => ex
@@ -116,6 +122,8 @@ class StateMainGame
                 puts '    Y:' + packet.vehicle_y.to_s
                 puts 'Speed: ' + packet.vehicle_speed.to_s
 
+                # @createVehicleIsSpecial = packet.vehicle_is_special
+                # @createVehicleOperation = packet.vehicle_operation
                 @createVehicleX = packet.vehicle_x
                 @createVehicleY = packet.vehicle_y
                 @createVehicleSpeed = packet.vehicle_speed
@@ -133,7 +141,7 @@ class StateMainGame
   end
 
   def update(dt)
-    if @client != nil and @isMultiplayer
+    if @client != nil and @isMultiplayer and @isFrog
       notify_server
     end
     # must update collision first
@@ -165,9 +173,7 @@ class StateMainGame
     # test
     if @createVehicle
       v = Vehicle.new(@createVehicleX, @createVehicleY, @createVehicleSpeed)
-      puts @createVehicleX
-      puts @createVehicleY
-      puts @createVehicleSpeed
+
       @vehicle_player.cur_vehicles.push(v)
       @collision.add_collidable(v)
       @canSpawnVehicle = false
@@ -201,7 +207,7 @@ class StateMainGame
     @canSpawnVehicle = false
     @vehicle_player_cooltime = @vehicle_player_cooldown
     if !@isFrog and @isMultiplayer
-      notify_server_vehicle(_vehicle)
+      notify_server_vehicle(_vehicle, classtype == SpecialVroom, operation)
     end
   end
 
