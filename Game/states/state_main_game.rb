@@ -85,8 +85,8 @@ class StateMainGame
     #   @p.vehicle_y.push(vehicle.y)
     #   @p.vehicle_speed.push(vehicle.speed)
     # end
-    # @p.vehicle_is_special = is_special
-    # @p.vehicle_operation = operation
+    @p.vehicle_is_special = is_special
+    @p.vehicle_operation = operation
     @p.vehicle_x = vehicle.x
     @p.vehicle_y = vehicle.y
     @p.vehicle_speed = vehicle.speed
@@ -117,19 +117,19 @@ class StateMainGame
             else
 
               if packet.vehicle_x != nil
-                puts 'got vehicles'
-                puts '    X:' + packet.vehicle_x.to_s
-                puts '    Y:' + packet.vehicle_y.to_s
-                puts 'Speed: ' + packet.vehicle_speed.to_s
+                # puts 'got vehicles'
+                # puts '    X:' + packet.vehicle_x.to_s
+                # puts '    Y:' + packet.vehicle_y.to_s
+                # puts 'Speed: ' + packet.vehicle_speed.to_s
 
-                # @createVehicleIsSpecial = packet.vehicle_is_special
-                # @createVehicleOperation = packet.vehicle_operation
+                @createVehicleIsSpecial = packet.vehicle_is_special
+                @createVehicleOperation = packet.vehicle_operation
                 @createVehicleX = packet.vehicle_x
                 @createVehicleY = packet.vehicle_y
                 @createVehicleSpeed = packet.vehicle_speed
                 @createVehicle = true
 
-                puts 'create a vehicle'
+                # puts 'create a vehicle'
 
               end
 
@@ -148,7 +148,7 @@ class StateMainGame
     @collision.update
     # @frog_player.update(false)
     @frog_player.update(!@isFrog, @isMultiplayer)
-    @vehicle_player.update
+    @vehicle_player.update(dt)
     if not @isFrog
       if not @canSpawnVehicle
         @vehicle_player_cooltime -= dt
@@ -172,7 +172,12 @@ class StateMainGame
 
     # test
     if @createVehicle
-      v = Vehicle.new(@createVehicleX, @createVehicleY, @createVehicleSpeed)
+      if @createVehicleIsSpecial
+        v = SpecialVroom.new(@createVehicleX, @createVehicleY, @createVehicleSpeed, @createVehicleOperation)
+      else
+        v = Vehicle.new(@createVehicleX, @createVehicleY, @createVehicleSpeed)
+      end
+
 
       @vehicle_player.cur_vehicles.push(v)
       @collision.add_collidable(v)

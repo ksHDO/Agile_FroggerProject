@@ -105,9 +105,9 @@ class VehiclePlayer < Player
     @cur_vehicles = []
   end
 
-  def update
+  def update(dt)
     @cur_vehicles.each do |car|
-      car.update
+      car.update(dt)
       if car.x + car.width < 0
         car.is_dead = true
         @cur_vehicles.delete(car)
@@ -140,7 +140,7 @@ class Vehicle
     init_collision(x, y, @image)
   end
 
-  def update
+  def update(dt)
     move
   end
 
@@ -169,14 +169,14 @@ class SpecialVroom < Vehicle
     super(x,y,speed)
     @typeOfMovement = typeOfMovement
   end
-  def update
+  def update(dt)
     super
     if @typeOfMovement == 'add'
-      @angle += Gosu::milliseconds() * 0.1
+      @angle += dt * 1000 * 0.1
     elsif @typeOfMovement == 'multiply'
-      @angle = Math.gamma(Gosu::milliseconds() * 0.1)
+      @angle = Math.gamma(dt * 1000 * 0.1)
     elsif @typeOfMovement == 'mod'
-      @angle %= Gosu::milliseconds() * 0.1
+      @angle %= dt * 1000 * 0.1
     end
     if @angle > (2**(0.size * 8 -2) -1)
     @angle = 1
