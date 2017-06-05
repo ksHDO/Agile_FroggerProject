@@ -18,6 +18,7 @@ class Client
   def get_server
     size = @server.gets.chomp
     data = @server.read(size.to_i)
+    puts data
     return YAML.load data
   end
 

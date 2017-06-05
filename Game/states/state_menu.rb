@@ -23,27 +23,18 @@ class StateMenu < GameState
   def update(dt)
     if @frog_button.is_pressed(Input.mouse_x, Input.mouse_y)
       @isFrog = true
-    end
-    if @vehicle_button.is_pressed(Input.mouse_x, Input.mouse_y)
+    elsif @vehicle_button.is_pressed(Input.mouse_x, Input.mouse_y)
       @isFrog = false
-    end
-    if @single_player_button.is_pressed(Input.mouse_x, Input.mouse_y)
+    elsif @single_player_button.is_pressed(Input.mouse_x, Input.mouse_y)
       @isMultiplayer = false
-    end
-    if @multi_player_button.is_pressed(Input.mouse_x, Input.mouse_y)
+    elsif @multi_player_button.is_pressed(Input.mouse_x, Input.mouse_y)
       @isMultiplayer = true
-    end
-    if @start_button.is_pressed(Input.mouse_x, Input.mouse_y)
-      if @isMultiplayer and not @isFrog
-        # listen_to_server
-      end
+    elsif @start_button.is_pressed(Input.mouse_x, Input.mouse_y)
       @state_stack.push StateMainGame.new(@state_stack, @isFrog, @isMultiplayer)
-      # @view = :game
     end
   end
 
   def draw
-    # $main_menu_image.draw_as_quad(0, 0, 0xffffffff, $window_x, 0, 0xffffffff, $window_x, $window_y, 0xffffffff, 0, $window_y, 0xffffffff, 0)
     menu_font_text = "REGGORF"
     menu_font_x_coordinate = $window_x/2 -100
     menu_font_y_coordinate = 100

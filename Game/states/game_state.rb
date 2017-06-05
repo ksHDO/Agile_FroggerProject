@@ -11,7 +11,6 @@ class StateStack
     @stack = []
   end
 
-
   def count
     return @stack.length
   end

@@ -39,7 +39,7 @@ class FrogPlayer < Player
         choice.call
         move
       end
-    else
+    elsif not isAi
       if Input.button_pressed(Gosu::KB_W) or Input.button_pressed(Gosu::Button::KbUp)
         turn_up
         move
