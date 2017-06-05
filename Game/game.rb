@@ -32,10 +32,20 @@ class GameWindow < Window
   end
 
   def update
-    @gameState.update
-
-    Input.update
+    dt = get_dt
     Input.update_mouse self.mouse_x, self.mouse_y
+    @gameState.update dt
+    Input.update
+  end
+
+  def get_dt
+    if @lastMilliseconds == nil
+      @lastMilliseconds = 0
+    end
+    milliseconds = Gosu::milliseconds
+    dt = milliseconds - @lastMilliseconds
+    @lastMilliseconds = milliseconds
+    return dt / 1000.0
   end
 
   def draw

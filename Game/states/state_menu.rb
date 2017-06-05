@@ -20,7 +20,7 @@ class StateMenu < GameState
     @isMultiplayer = false
   end
 
-  def update
+  def update(dt)
     if @frog_button.is_pressed(Input.mouse_x, Input.mouse_y)
       @isFrog = true
     end

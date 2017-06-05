@@ -1,5 +1,5 @@
 class GameState
-  def update
+  def update(dt)
   end
 
   def draw
@@ -10,6 +10,7 @@ class StateStack
   def initialize
     @stack = []
   end
+
 
   def count
     return @stack.length
@@ -23,9 +24,9 @@ class StateStack
     return @stack.pop
   end
 
-  def update
+  def update(dt)
     if @stack.length > 0
-      @stack[-1].update
+      @stack[-1].update(dt)
     end
   end
 

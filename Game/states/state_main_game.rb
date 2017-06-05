@@ -32,7 +32,7 @@ class StateMainGame
 
     @frog_player = FrogPlayer.new
     @vehicle_player = VehiclePlayer.new(@button1)
-    @vehicle_player_cooldown = 4.0
+    @vehicle_player_cooldown = 0.5
     @vehicle_player_cooltime = 0.0
     @canSpawnVehicle = true
     @collision = CollisionDetection.new(Array.[](@frog_player))
@@ -101,7 +101,7 @@ class StateMainGame
     end
   end
 
-  def update
+  def update(dt)
     if @client != nil and @isMultiplayer
       notify_server
     end
@@ -112,7 +112,7 @@ class StateMainGame
     @vehicle_player.update
     if not @isFrog
       if not @canSpawnVehicle
-        @vehicle_player_cooltime -= Gosu::milliseconds() * 0.00001
+        @vehicle_player_cooltime -= dt
         if @vehicle_player_cooltime <= 0.0
           @canSpawnVehicle = true
           @sfxSelect.play
@@ -126,8 +126,10 @@ class StateMainGame
       end
     end
     if !@isMultiplayer and @isFrog
-      if rand(25) == 4
+      @vehicle_player_cooltime -= dt
+      if @vehicle_player_cooltime <= 0.0 and rand(25) == 4
         push_car
+        @vehicle_player_cooltime = @vehicle_player_cooldown
       end
     end
   end
