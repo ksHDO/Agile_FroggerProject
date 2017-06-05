@@ -1,6 +1,11 @@
 require 'gosu'
 
 class Input
+
+  class << self
+    attr_accessor :mouse_x, :mouse_y
+  end
+
   @pressed_last_frame = Hash.new(false)
 
   def self.update
@@ -33,6 +38,11 @@ class Input
         _released = true
       end
     end
+  end
+
+  def self.update_mouse(x, y)
+    @@mouse_x = x
+    @@mouse_y = y
   end
 
   private
