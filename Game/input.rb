@@ -41,8 +41,8 @@ class Input
   end
 
   def self.update_mouse(x, y)
-    @@mouse_x = x
-    @@mouse_y = y
+    self.mouse_x = x
+    self.mouse_y = y
   end
 
   private
